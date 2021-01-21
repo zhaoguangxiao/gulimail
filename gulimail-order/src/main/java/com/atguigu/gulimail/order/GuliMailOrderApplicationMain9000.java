@@ -1,11 +1,11 @@
-package com.atguigu.gulimail.member;
+package com.atguigu.gulimail.order;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class GuliMailMemberApplicationMain {
+public class GuliMailOrderApplicationMain9000 {
     public static void main(String[] args) {
-        SpringApplication.run(GuliMailMemberApplicationMain.class, args);
+        SpringApplication.run(GuliMailOrderApplicationMain9000.class, args);
     }
 }
