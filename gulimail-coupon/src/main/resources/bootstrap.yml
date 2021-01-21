@@ -1,0 +1,51 @@
+## DataSource Config
+#spring:
+#  datasource:
+#    driver-class-name: com.mysql.jdbc.Driver
+#    url: jdbc:mysql://192.168.247.111:3306/guli_sms?useUnicode=true&characterEncoding=UTF-8
+#    username: root
+#    password: 123456
+#  application:
+#    name: gulimail-coupon-7000  #当前服务名字
+#  cloud:
+#    nacos:
+#      discovery:
+#        server-addr: 192.168.247.111:8848  #配置Nacos 的IP地址
+#      config:
+#        server-addr: 192.168.247.111:8848  #配置Nacos 的IP地址
+#        file-extension: yaml #指定yaml 格式配置
+#        namespace: aa1a6a01-ac7e-4d53-8f4d-209bf19798e7
+#
+#server:
+#  port: 7000
+#mybatis-plus:
+#  mapper-locations: classpath:/mapper/**/*.xml
+#  global-config:
+#    db-config:
+#      id-type: auto  #主键类型  AUTO:"数据库ID自增", INPUT:"用户输入ID", ID_WORKER:"全局唯一ID (数字类型唯一ID)", UUID:"全局唯一ID UUID";
+#
+#  # gulimail-coupon-7000-dev.yaml
+
+
+
+spring:
+  application:
+    name: gulimail-coupon-7000  #当前服务名字
+  cloud:
+    nacos:
+      config:
+        ext-config[0]:
+          dataId: data-sources.yaml
+          refresh: true
+        ext-config[1]:
+          dataId: mybatis-plus-config.yaml
+          refresh: true
+        ext-config[2]:
+          dataId: other-config.yaml
+          refresh: true
+        ext-config[3]:
+          dataId: nacos-config.yaml
+          refresh: true
+        namespace: 1c6ade84-ef58-4029-a7ae-3ad4ad81115e  #指定从那个命名空间下读取配置文件
+        file-extension: yaml
+        server-addr: 192.168.247.111:8848  #注册配置中心位置

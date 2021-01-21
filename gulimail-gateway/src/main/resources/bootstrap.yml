@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: gulimail-gateway
+  cloud:
+    nacos:
+      config:
+        server-addr: 192.168.247.111:8848  #配置Nacos 的IP地址
+        namespace: 9dfb04ea-315b-4539-8397-c67f6aead025
+        file-extension: yaml  #指定文件后缀
+    gateway:
+      routes:
+        - id: payment_route # 路由的id,没有规定规则但要求唯一,建议配合服务名
+          #匹配后提供服务的路由地址
+          uri: https://www.baidu.com
+          predicates:
+            - Query=url,baidu # 断言，路径相匹配的进行路由
+
+        - id: payment_route2
+          uri: https://www.qq.com
+          predicates:
+            - Query=url,qq #断言,路径相匹配的进行路由
+
