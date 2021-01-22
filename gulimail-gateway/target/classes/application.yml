@@ -1,0 +1,7 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.247.111:8848  #配置Nacos 的IP地址
+  profiles:
+    active: dev
