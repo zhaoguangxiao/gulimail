@@ -17,7 +17,6 @@
     <module>gulimail-member</module>
     <module>gulimail-order</module>
     <module>gulimail-ware</module>
-    <module>renren-generator</module>
     <module>gulimail-common</module>
     <module>gulimail-gateway</module>
     <module>gulimail-web-fast</module>

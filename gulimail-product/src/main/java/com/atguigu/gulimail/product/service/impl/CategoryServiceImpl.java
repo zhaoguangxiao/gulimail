@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -46,7 +45,13 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                 ).collect(Collectors.toList());
         //找出1级分类下面的子分类
 
-        return selectList;
+        return collect;
+    }
+
+    @Override
+    public void removeMenuByIds(List<Long> catIds) {
+        //TODO 1检查当前删除的菜单是否被别的地方引用
+        baseMapper.deleteBatchIds(catIds);
     }
 
     private List<CategoryEntity> getStructure(CategoryEntity root, List<CategoryEntity> all) {

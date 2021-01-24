@@ -20,3 +20,21 @@ spring:
           predicates:
             - Query=url,qq #断言,路径相匹配的进行路由
 
+       #精确的优先级放前面
+        - id: gulimail-product  #商品服务
+          uri: lb://gulimail-product
+          predicates:
+            - Path=/api/product/** # 断言，路径相匹配的进行路由
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+
+
+        #模糊的优先级放最后
+        - id: gulimail-web-fast
+          uri: lb://gulimail-web-fast
+          predicates:
+            - Path=/api/** # 断言，路径相匹配的进行路由
+          filters:
+            - RewritePath=/api/(?<segment>.*), /renren-fast/$\{segment}
+
+

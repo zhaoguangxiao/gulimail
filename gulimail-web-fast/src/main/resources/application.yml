@@ -10,6 +10,12 @@ server:
     context-path: /renren-fast
 
 spring:
+  application:
+    name: gulimail-web-fast   #服务名
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.247.111:8848          #把服务注册到8848服务中心
   # 环境 dev|test|prod
   profiles:
     active: dev
