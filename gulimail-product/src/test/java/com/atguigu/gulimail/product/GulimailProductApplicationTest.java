@@ -1,9 +1,7 @@
 package com.atguigu.gulimail.product;
 
-import com.atguigu.common.utils.PageUtils;
 import com.atguigu.gulimail.product.entity.BrandEntity;
 import com.atguigu.gulimail.product.service.BrandService;
-import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,12 +18,16 @@ public class GulimailProductApplicationTest {
     private BrandService brandService;
 
 
+
     @Test
-    public void findBrand(){
+    public void findBrand() {
         BrandEntity entity = new BrandEntity();
         entity.setName("锤子");
         boolean save = brandService.save(entity);
         Assert.assertTrue(save);
     }
+
+
+
 
 }

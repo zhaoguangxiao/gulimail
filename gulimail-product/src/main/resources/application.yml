@@ -26,3 +26,5 @@ mybatis-plus:
 logging:
   level:
     com.atguigu.gulimail: debug  #打印debut日志
+
+
