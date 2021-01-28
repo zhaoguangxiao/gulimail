@@ -43,7 +43,8 @@ public class GulimailExceptionControllerAdvice {
 
 
     @ExceptionHandler(value = Throwable.class)
-    public R handException() {
+    public R handException(Throwable throwable) {
+        log.error(throwable.getMessage());
         return R.error(BizCodeEnume.UNKNOW_Exception.getCode(),BizCodeEnume.UNKNOW_Exception.getMessage());
     }
 

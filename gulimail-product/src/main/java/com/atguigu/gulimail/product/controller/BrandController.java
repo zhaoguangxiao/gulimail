@@ -4,8 +4,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.atguigu.common.vaild.InsertGroup;
+import com.atguigu.common.vaild.UpdateGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,8 +74,8 @@ public class BrandController {
      */
     @RequestMapping("/update")
     //@RequiresPermissions("product:brand:update")
-    public R update(@RequestBody BrandEntity brand) {
-        brandService.updateById(brand);
+    public R update(@Validated({UpdateGroup.class}) @RequestBody BrandEntity brand) {
+        brandService.updateBrandEntityById(brand);
         return R.ok();
     }
 

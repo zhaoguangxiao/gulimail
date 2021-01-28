@@ -1,7 +1,11 @@
 package com.atguigu.gulimail.product.service.impl;
 
+import com.atguigu.gulimail.product.service.CategoryBrandRelationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -15,10 +19,16 @@ import com.atguigu.common.utils.Query;
 import com.atguigu.gulimail.product.dao.CategoryDao;
 import com.atguigu.gulimail.product.entity.CategoryEntity;
 import com.atguigu.gulimail.product.service.CategoryService;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
+
+
+    @Autowired
+    private CategoryBrandRelationService categoryBrandRelationService;
+
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -52,6 +62,34 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public void removeMenuByIds(List<Long> catIds) {
         //TODO 1检查当前删除的菜单是否被别的地方引用
         baseMapper.deleteBatchIds(catIds);
+    }
+
+    @Override
+    public Long[] getCatelogPath(Long catelogId) {
+        List<Long> lists = new ArrayList<>();
+        List<Long> parentPath = findParentPath(catelogId, lists);
+        Collections.reverse(parentPath);
+        return (Long[]) parentPath.toArray(new Long[parentPath.size()]);
+    }
+
+    @Override
+    @Transactional
+    public void updateCategoryEntityById(CategoryEntity category) {
+        //update this
+        this.updateById(category);
+        //update categoryBrandRelation  name
+        categoryBrandRelationService.updateCategoryBycategoryId(category.getCatId(),category.getName());
+        //TODO
+
+    }
+
+    private List<Long> findParentPath(Long categoryId, List<Long> list) {
+        list.add(categoryId);
+        CategoryEntity byId = this.getById(categoryId);
+        if (byId != null && byId.getParentCid() != null && byId.getParentCid() != 0) {
+            findParentPath(byId.getParentCid(), list);
+        }
+        return list;
     }
 
     private List<CategoryEntity> getStructure(CategoryEntity root, List<CategoryEntity> all) {
