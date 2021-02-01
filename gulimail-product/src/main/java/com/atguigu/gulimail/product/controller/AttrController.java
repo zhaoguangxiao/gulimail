@@ -3,6 +3,8 @@ package com.atguigu.gulimail.product.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.atguigu.common.constant.ProductConstant;
+import com.atguigu.gulimail.product.vo.AttrResponseVo;
 import com.atguigu.gulimail.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -44,9 +46,8 @@ public class AttrController {
     @RequestMapping("/info/{attrId}")
     //@RequiresPermissions("product:attr:info")
     public R info(@PathVariable("attrId") Long attrId) {
-        AttrEntity attr = attrService.getById(attrId);
-
-        return R.ok().put("attr", attr);
+        AttrResponseVo attrVo = attrService.getAttrVoById(attrId);
+        return R.ok().put("attr", attrVo);
     }
 
     /**
@@ -65,9 +66,8 @@ public class AttrController {
      */
     @RequestMapping("/update")
     //@RequiresPermissions("product:attr:update")
-    public R update(@RequestBody AttrEntity attr) {
-        attrService.updateById(attr);
-
+    public R update(@RequestBody AttrVo attrVo) {
+        attrService.updateAttrVo(attrVo);
         return R.ok();
     }
 
@@ -83,10 +83,26 @@ public class AttrController {
     }
 
 
+    /**
+     * @param params
+     * @param catelogId
+     * @return 返回全部基本属性
+     */
     @GetMapping("/base/list/{catelogId}")
     public R baseList(@RequestParam Map<String, Object> params,
                       @PathVariable("catelogId") Long catelogId) {
-        PageUtils page = attrService.baseListPage(params, catelogId);
+        PageUtils page = attrService.baseListPage(params, catelogId, ProductConstant.AttrConstantEnum.ATTR_TYPE_BASE.getCode());
+        return R.ok().put("page", page);
+    }
+
+
+    /**
+     * @return 返回全部销售属性
+     */
+    @GetMapping("/sale/list/{catelogId}")
+    public R getClassifiedSaleAttributes(@RequestParam Map<String, Object> params,
+                                         @PathVariable("catelogId") Long catelogId) {
+        PageUtils page = attrService.baseListPage(params, catelogId,ProductConstant.AttrConstantEnum.ATTR_TYPE_SALE.getCode());
         return R.ok().put("page", page);
     }
 

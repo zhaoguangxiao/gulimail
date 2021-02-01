@@ -14,4 +14,8 @@ public class AttrVo extends AttrEntity {
 
     private Long attrGroupId;
 
+    /**
+     * 分类完整路径
+     */
+    private Long[] catelogPath;
 }

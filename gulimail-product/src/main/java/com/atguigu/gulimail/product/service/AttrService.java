@@ -1,5 +1,6 @@
 package com.atguigu.gulimail.product.service;
 
+import com.atguigu.gulimail.product.vo.AttrResponseVo;
 import com.atguigu.gulimail.product.vo.AttrVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.common.utils.PageUtils;
@@ -29,8 +30,13 @@ public interface AttrService extends IService<AttrEntity> {
     /**
      * @param params
      * @param catelogId
+     * @param attrType 类型
      * @return
      */
-    PageUtils baseListPage(Map<String, Object> params, Long catelogId);
+    PageUtils baseListPage(Map<String, Object> params, Long catelogId,Integer attrType);
+
+    AttrResponseVo getAttrVoById(Long attrId);
+
+    void updateAttrVo(AttrVo attrVo);
 }
 

@@ -5,13 +5,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.atguigu.common.exception.BizCodeEnume;
+import com.atguigu.gulimail.product.entity.AttrEntity;
+import com.atguigu.gulimail.product.service.AttrAttrgroupRelationService;
 import com.atguigu.gulimail.product.service.CategoryService;
+import com.atguigu.gulimail.product.vo.AttrGroupRelationVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.atguigu.gulimail.product.entity.AttrGroupEntity;
 import com.atguigu.gulimail.product.service.AttrGroupService;
@@ -26,9 +27,16 @@ import com.atguigu.common.utils.R;
  * @email 1764773283@qq.com
  * @date 2021-01-20 16:19:05
  */
+@Slf4j
 @RestController
 @RequestMapping("product/attrgroup")
 public class AttrGroupController {
+
+
+    @Autowired
+    private AttrAttrgroupRelationService attrAttrgroupRelationService;
+
+
     @Autowired
     private AttrGroupService attrGroupService;
 
@@ -93,9 +101,45 @@ public class AttrGroupController {
     @RequestMapping("/delete")
     //@RequiresPermissions("product:attrgroup:delete")
     public R delete(@RequestBody Long[] attrGroupIds) {
-        attrGroupService.removeByIds(Arrays.asList(attrGroupIds));
+        log.info("执行删除逻辑");
+        Boolean deleteByIds = attrGroupService.deleteByIds(Arrays.asList(attrGroupIds));
+        if (deleteByIds) return R.ok();
+        else return R.error(BizCodeEnume.DELETION_FAILED.getCode(), BizCodeEnume.DELETION_FAILED.getMessage());
+    }
 
+    /**
+     * @return 返回当前分组的全部关联关系
+     */
+    @GetMapping("/{attrgroupId}/attr/relation")
+    public R findAttrGroupAndRelationship(@PathVariable("attrgroupId") Long attrgroupId) {
+        List<AttrEntity> attrEntity = attrGroupService.findAttrGroupAndRelationship(attrgroupId);
+        return R.ok().put("data", attrEntity);
+    }
+
+
+    @PostMapping("/attr/relation/delete")
+    public R deleteGroupAndRelationship(@RequestBody AttrGroupRelationVo[] attrGroupRelationVo) {
+        attrGroupService.deleteGroupAndRelationship(attrGroupRelationVo);
         return R.ok();
     }
 
+    /**
+     * 获取属性分组里面还没有关联的本分类里面的其他基本属性，方便添加新的关联
+     *
+     * @param attrgroupId
+     * @return
+     */
+    @GetMapping("/{attrgroupId}/noattr/relation")
+    public R findNoattrRelation(@RequestParam Map<String, Object> params,
+                                @PathVariable("attrgroupId") Long attrgroupId) {
+        PageUtils page = attrGroupService.findNoattrRelation(params, attrgroupId);
+        return R.ok().put("page", page);
+    }
+
+
+    @PostMapping("/attr/relation")
+    public R saveGroupAndRelation(@RequestBody List<AttrGroupRelationVo> attrGroupRelationVo) {
+        attrGroupService.saveGroupAndRelation(attrGroupRelationVo);
+        return R.ok();
+    }
 }
