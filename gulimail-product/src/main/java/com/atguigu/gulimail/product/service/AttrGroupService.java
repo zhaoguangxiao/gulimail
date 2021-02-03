@@ -2,6 +2,7 @@ package com.atguigu.gulimail.product.service;
 
 import com.atguigu.gulimail.product.entity.AttrEntity;
 import com.atguigu.gulimail.product.vo.AttrGroupRelationVo;
+import com.atguigu.gulimail.product.vo.ResponseAttrGroupWithAttrVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.gulimail.product.entity.AttrGroupEntity;
@@ -45,5 +46,8 @@ public interface AttrGroupService extends IService<AttrGroupEntity> {
      * @return
      */
     Boolean deleteByIds(List<Long> asList);
+
+    List<ResponseAttrGroupWithAttrVo> getAttrGroupWithAttr(Long catelogId);
+
 }
 

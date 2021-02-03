@@ -273,7 +273,7 @@ CREATE TABLE `sms_seckill_sku_notice`  (
 DROP TABLE IF EXISTS `sms_sku_bounds`;
 CREATE TABLE `sms_sku_bounds`  (
                                    `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
-                                   `sku_id` bigint(20) NULL DEFAULT NULL,
+                                   `spu_id` bigint(20) NULL DEFAULT NULL,
                                    `grow_bounds` decimal(18, 4) NULL DEFAULT NULL COMMENT '成长积分',
                                    `buy_bounds` decimal(18, 4) NULL DEFAULT NULL COMMENT '购物积分',
                                    `work` tinyint(1) NULL DEFAULT NULL COMMENT '优惠生效情况[1111（四个状态位，从右到左）;0 - 无优惠，成长积分是否赠送;1 - 无优惠，购物积分是否赠送;2 - 有优惠，成长积分是否赠送;3 - 有优惠，购物积分是否赠送【状态位0：不赠送，1：赠送】]',

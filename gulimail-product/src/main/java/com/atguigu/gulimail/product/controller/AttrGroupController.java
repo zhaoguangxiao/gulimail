@@ -10,6 +10,7 @@ import com.atguigu.gulimail.product.entity.AttrEntity;
 import com.atguigu.gulimail.product.service.AttrAttrgroupRelationService;
 import com.atguigu.gulimail.product.service.CategoryService;
 import com.atguigu.gulimail.product.vo.AttrGroupRelationVo;
+import com.atguigu.gulimail.product.vo.ResponseAttrGroupWithAttrVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -142,4 +143,17 @@ public class AttrGroupController {
         attrGroupService.saveGroupAndRelation(attrGroupRelationVo);
         return R.ok();
     }
+
+
+    /**
+     * 获取分类下所有分组&关联属性
+     *
+     * @return
+     */
+    @GetMapping("/{catelogId}/withattr")
+    public R getAttrGroupWithAttr(@PathVariable("catelogId") Long catelogId) {
+        List<ResponseAttrGroupWithAttrVo> attrVo = attrGroupService.getAttrGroupWithAttr(catelogId);
+        return R.ok().put("data", attrVo);
+    }
+
 }

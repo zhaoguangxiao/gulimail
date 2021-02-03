@@ -25,6 +25,8 @@ import com.atguigu.common.utils.R;
 @RestController
 @RequestMapping("product/attr")
 public class AttrController {
+
+
     @Autowired
     private AttrService attrService;
 

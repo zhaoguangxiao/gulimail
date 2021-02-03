@@ -28,7 +28,7 @@ public class SkuBoundsEntity implements Serializable {
 	/**
 	 * 
 	 */
-	private Long skuId;
+	private Long spuId;
 	/**
 	 * 成长积分
 	 */

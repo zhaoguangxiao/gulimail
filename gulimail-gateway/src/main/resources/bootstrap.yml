@@ -9,16 +9,13 @@ spring:
         file-extension: yaml  #指定文件后缀
     gateway:
       routes:
-        - id: payment_route # 路由的id,没有规定规则但要求唯一,建议配合服务名
+        - id: gulimail-member # 路由的id,没有规定规则但要求唯一,建议配合服务名
           #匹配后提供服务的路由地址
-          uri: https://www.baidu.com
+          uri: lb://gulimail-member
           predicates:
-            - Query=url,baidu # 断言，路径相匹配的进行路由
-
-        - id: payment_route2
-          uri: https://www.qq.com
-          predicates:
-            - Query=url,qq #断言,路径相匹配的进行路由
+            - Path=/api/member/** # 断言，路径相匹配的进行路由
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
 
        #精确的优先级放前面
         - id: gulimail-product  #商品服务

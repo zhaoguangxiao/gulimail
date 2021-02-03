@@ -26,7 +26,7 @@ public class SkuLadderEntity implements Serializable {
 	@TableId
 	private Long id;
 	/**
-	 * spu_id
+	 * skuId
 	 */
 	private Long skuId;
 	/**

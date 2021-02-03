@@ -6,6 +6,7 @@ import com.atguigu.gulimail.product.entity.AttrEntity;
 import com.atguigu.gulimail.product.service.AttrAttrgroupRelationService;
 import com.atguigu.gulimail.product.service.AttrService;
 import com.atguigu.gulimail.product.vo.AttrGroupRelationVo;
+import com.atguigu.gulimail.product.vo.ResponseAttrGroupWithAttrVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -172,5 +173,21 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
             return this.removeByIds(asList);
         }
         return false;
+    }
+
+    @Override
+    public List<ResponseAttrGroupWithAttrVo> getAttrGroupWithAttr(Long catelogId) {
+        List<AttrGroupEntity> entities = this.list(new QueryWrapper<AttrGroupEntity>().eq("catelog_id", catelogId));
+        List<ResponseAttrGroupWithAttrVo> collect = entities.stream().map(item -> {
+            ResponseAttrGroupWithAttrVo attrVo = new ResponseAttrGroupWithAttrVo();
+            BeanUtils.copyProperties(item,attrVo);
+            //获取每个分组下面的具体属性
+            List<AttrEntity> groupAndRelationship = findAttrGroupAndRelationship(item.getAttrGroupId());
+            if (!groupAndRelationship.isEmpty()){
+                attrVo.setAttrs(groupAndRelationship);
+            }
+            return attrVo;
+        }).collect(Collectors.toList());
+        return collect;
     }
 }
