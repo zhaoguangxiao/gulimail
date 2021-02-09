@@ -13,6 +13,8 @@ File Encoding         : 65001
 Date: 2020-03-11 17:36:52
 */
 
+create database guli_pms
+
 use guli_pms;
 
 SET FOREIGN_KEY_CHECKS=0;

@@ -13,6 +13,9 @@
         <result property="stockLocked" column="stock_locked"/>
         <result property="sales" column="sales"/>
     </resultMap>
+    <update id="update">
+        update wms_ware_sku set stock=stock+#{skuNum} where sku_id=#{skuId} and ware_id=#{wareId}
+    </update>
 
 
 </mapper>

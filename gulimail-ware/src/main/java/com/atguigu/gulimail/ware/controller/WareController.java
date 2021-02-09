@@ -25,7 +25,7 @@ import com.atguigu.common.utils.R;
  * @date 2021-01-21 09:46:44
  */
 @RestController
-@RequestMapping("ware/ware")
+@RequestMapping("ware/wareinfo")
 public class WareController {
     @Autowired
     private WareService wareService;

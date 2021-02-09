@@ -15,7 +15,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 192.168.247.111:8848          #把服务注册到8848服务中心
+        server-addr: 47.103.16.140:8848          #把服务注册到8848服务中心
   # 环境 dev|test|prod
   profiles:
     active: dev

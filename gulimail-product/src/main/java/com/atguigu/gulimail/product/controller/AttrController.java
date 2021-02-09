@@ -1,9 +1,12 @@
 package com.atguigu.gulimail.product.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import com.atguigu.common.constant.ProductConstant;
+import com.atguigu.gulimail.product.entity.SkuInfoEntity;
+import com.atguigu.gulimail.product.service.SkuInfoService;
 import com.atguigu.gulimail.product.vo.AttrResponseVo;
 import com.atguigu.gulimail.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +33,10 @@ public class AttrController {
     @Autowired
     private AttrService attrService;
 
+
+    @Autowired
+    private SkuInfoService skuInfoService;
+
     /**
      * 列表
      */
@@ -39,6 +46,13 @@ public class AttrController {
         PageUtils page = attrService.queryPage(params);
 
         return R.ok().put("page", page);
+    }
+
+
+    @GetMapping(value = "/base/listforspu/{spuId}")
+    public R baseListForSpu(@PathVariable("spuId") Long spuId) {
+        List<SkuInfoEntity> list = skuInfoService.baseListForSpu(spuId);
+        return R.ok().put("data", list);
     }
 
 
@@ -104,7 +118,7 @@ public class AttrController {
     @GetMapping("/sale/list/{catelogId}")
     public R getClassifiedSaleAttributes(@RequestParam Map<String, Object> params,
                                          @PathVariable("catelogId") Long catelogId) {
-        PageUtils page = attrService.baseListPage(params, catelogId,ProductConstant.AttrConstantEnum.ATTR_TYPE_SALE.getCode());
+        PageUtils page = attrService.baseListPage(params, catelogId, ProductConstant.AttrConstantEnum.ATTR_TYPE_SALE.getCode());
         return R.ok().put("page", page);
     }
 

@@ -1,16 +1,18 @@
 # DataSource Config
 spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss  #指定时间格式化
   application:
     name: gulimail-product  #商品服务名
   cloud:
     nacos:
       discovery:
-        server-addr: 192.168.247.111:8848   #服务注册进服务中心
+        server-addr: 47.103.16.140:8848   #服务注册进服务中心
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.247.111:3306/guli_pms?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    url: jdbc:mysql://47.103.16.140:3306/guli_pms?useUnicode=true&characterEncoding=UTF-8&useSSL=false
     username: root
-    password: 123456
+    password: Abc123!_
 server:
   port: 10000
 mybatis-plus:
@@ -26,5 +28,14 @@ mybatis-plus:
 logging:
   level:
     com.atguigu.gulimail: debug  #打印debut日志
+
+
+#feign 远程连接时间是否超时
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 10000
+        read-timeout: 10000
 
 

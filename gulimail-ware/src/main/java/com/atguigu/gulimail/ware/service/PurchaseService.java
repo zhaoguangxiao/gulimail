@@ -1,5 +1,7 @@
 package com.atguigu.gulimail.ware.service;
 
+import com.atguigu.gulimail.ware.vo.RequestPurchaseFinshVo;
+import com.atguigu.gulimail.ware.vo.RequestPurchaseVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.gulimail.ware.entity.PurchaseEntity;
@@ -16,5 +18,14 @@ import java.util.Map;
 public interface PurchaseService extends IService<PurchaseEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    PageUtils queryPageUnReceive(Map<String, Object> params);
+
+    void savePurchaseVo(RequestPurchaseVo requestPurchaseVo);
+
+    void received(Long[] ids);
+
+    void completePurchaseVo(RequestPurchaseFinshVo requestPurchaseFinshVo);
+
 }
 

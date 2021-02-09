@@ -2,9 +2,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.247.111:3306/guli_oms?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    url: jdbc:mysql://47.103.16.140:3306/guli_oms?useUnicode=true&characterEncoding=UTF-8&useSSL=false
     username: root
-    password: 123456
+    password: Abc123!_
 server:
   port: 9000
 mybatis-plus:
