@@ -81,10 +81,5 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
     }
 
 
-    @Override
-    public List<SkuInfoEntity> baseListForSpu(Long spuId) {
-        QueryWrapper<SkuInfoEntity> entityQueryWrapper = new QueryWrapper<>();
-        entityQueryWrapper.eq("spu_id", entityQueryWrapper);
-        return this.list(entityQueryWrapper);
-    }
+
 }

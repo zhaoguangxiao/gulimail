@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.atguigu.common.constant.ProductConstant;
+import com.atguigu.gulimail.product.entity.ProductAttrValueEntity;
 import com.atguigu.gulimail.product.entity.SkuInfoEntity;
+import com.atguigu.gulimail.product.service.ProductAttrValueService;
 import com.atguigu.gulimail.product.service.SkuInfoService;
 import com.atguigu.gulimail.product.vo.AttrResponseVo;
 import com.atguigu.gulimail.product.vo.AttrVo;
@@ -35,7 +37,7 @@ public class AttrController {
 
 
     @Autowired
-    private SkuInfoService skuInfoService;
+    private ProductAttrValueService productAttrValueService;
 
     /**
      * 列表
@@ -51,7 +53,7 @@ public class AttrController {
 
     @GetMapping(value = "/base/listforspu/{spuId}")
     public R baseListForSpu(@PathVariable("spuId") Long spuId) {
-        List<SkuInfoEntity> list = skuInfoService.baseListForSpu(spuId);
+        List<ProductAttrValueEntity> list = productAttrValueService.baseListForSpu(spuId);
         return R.ok().put("data", list);
     }
 
@@ -86,6 +88,15 @@ public class AttrController {
         attrService.updateAttrVo(attrVo);
         return R.ok();
     }
+
+    @PostMapping("/update/{spuId}")
+    public R updateBySpuId(@PathVariable("spuId") Long spuId,
+                           @RequestBody List<ProductAttrValueEntity> entityList) {
+        productAttrValueService.updateBySpuId(spuId,entityList);
+        return R.ok();
+    }
+
+
 
     /**
      * 删除

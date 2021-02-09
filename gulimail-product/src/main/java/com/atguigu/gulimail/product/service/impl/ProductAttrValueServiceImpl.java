@@ -1,5 +1,6 @@
 package com.atguigu.gulimail.product.service.impl;
 
+import com.atguigu.gulimail.product.entity.SkuInfoEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,5 +43,13 @@ public class ProductAttrValueServiceImpl extends ServiceImpl<ProductAttrValueDao
             return item;
         }).collect(Collectors.toList());
         this.saveBatch(collect);
+    }
+
+
+    @Override
+    public List<ProductAttrValueEntity> baseListForSpu(Long spuId) {
+        QueryWrapper<ProductAttrValueEntity> entityQueryWrapper = new QueryWrapper<>();
+        entityQueryWrapper.eq("spu_id", spuId);
+        return this.list(entityQueryWrapper);
     }
 }

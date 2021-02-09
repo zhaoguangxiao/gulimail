@@ -20,6 +20,6 @@ public interface SkuInfoService extends IService<SkuInfoEntity> {
 
     PageUtils queryPageCondition(Map<String, Object> params);
 
-    List<SkuInfoEntity> baseListForSpu(Long spuId);
+
 }
 

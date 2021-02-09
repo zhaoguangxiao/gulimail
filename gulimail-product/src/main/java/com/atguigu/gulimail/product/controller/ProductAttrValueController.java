@@ -84,11 +84,6 @@ public class ProductAttrValueController {
     }
 
 
-    @PostMapping("/update/{spuId}")
-    public R updateBySpuId(@PathVariable("spuId") Long spuId,
-                           @RequestBody List<ProductAttrValueEntity> entityList) {
-        productAttrValueService.updateBySpuId(spuId,entityList);
-        return R.ok();
-    }
+
 
 }
