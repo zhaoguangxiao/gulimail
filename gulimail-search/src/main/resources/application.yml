@@ -6,4 +6,4 @@ spring:
       discovery:
         server-addr: 47.103.16.140:8848  #配置Nacos 的IP地址
 server:
-  port:
+  port: 12000

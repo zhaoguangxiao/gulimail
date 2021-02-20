@@ -1,16 +1,22 @@
 package com.atguigu.gulimail.product.service.impl;
 
+import com.alibaba.fastjson.TypeReference;
 import com.atguigu.common.to.SkuBoundsTo;
 import com.atguigu.common.to.SkuReductionTo;
+import com.atguigu.common.to.es.SkuESMode;
+import com.atguigu.common.to.ware.ResponseSkuHasStockVo;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.Query;
 import com.atguigu.common.utils.R;
 import com.atguigu.gulimail.product.dao.SpuInfoDao;
 import com.atguigu.gulimail.product.entity.*;
+import com.atguigu.gulimail.product.feign.ESSaveFeignService;
 import com.atguigu.gulimail.product.feign.SkuBoundsFeignService;
+import com.atguigu.gulimail.product.feign.WareSkuFeignService;
 import com.atguigu.gulimail.product.service.*;
 import com.atguigu.gulimail.product.vo.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -21,16 +27,29 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.atguigu.common.constant.ProductConstant.StatusEnum.UP_ENUM;
 
 
 @Slf4j
 @Service("spuInfoService")
 public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> implements SpuInfoService {
 
+    @Autowired
+    private ESSaveFeignService esSaveFeignService;
+
+    @Autowired
+    private WareSkuFeignService wareSkuFeignService;
+
+
+    @Autowired
+    private CategoryService categoryService;
+
+
+    @Autowired
+    private BrandService brandService;
 
     @Autowired
     private AttrService attrService;
@@ -217,4 +236,99 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         return new PageUtils(page);
     }
 
+
+    @Override
+    public void up(Long spuId) {
+        //1 根据spuid 查出所有的sku信息,品牌名称
+        List<SkuInfoEntity> skus = skuInfoService.getSkuBySpuId(spuId);
+
+        //查询当前sku的所有可以被用来检索的规格属性
+        List<ProductAttrValueEntity> valueEntities = productAttrValueService.baseListForSpu(spuId);
+
+        List<Long> attrIds = valueEntities.stream().map(item -> {
+            return item.getAttrId();
+        }).collect(Collectors.toList());
+
+        List<Long> searchAttrIds = attrService.getSearchAttrs(attrIds);
+        Set<Long> idsSet = new HashSet<>(searchAttrIds);
+
+        List<SkuESMode.Attrs> collect = valueEntities.stream().filter(item -> {
+            return idsSet.contains(item.getAttrId());
+        }).map(item -> {
+            SkuESMode.Attrs attr = new SkuESMode.Attrs();
+            BeanUtils.copyProperties(item, attr);
+            return attr;
+        }).collect(Collectors.toList());
+
+
+        //远程调用查看 是否存在库存
+        List<Long> skuIds = skus.stream().map(item -> {
+            return item.getSkuId();
+        }).collect(Collectors.toList());
+
+        Map<Long, Boolean> booleanMap = null;
+        try {
+            R skuHasStock = wareSkuFeignService.getSkuHasStock(skuIds);
+            log.info("远程调用库存系统 {}", skuHasStock);
+            //把list 转换为 map 进行快速查找
+            TypeReference<List<ResponseSkuHasStockVo>> typeReference = new TypeReference<List<ResponseSkuHasStockVo>>() {
+            };
+            booleanMap = skuHasStock.getData(typeReference).stream().collect(Collectors.toMap(ResponseSkuHasStockVo::getSkuId, ResponseSkuHasStockVo::getHasStock));
+        } catch (Exception exception) {
+            log.error("库存远程调用失败 {}", exception);
+        }
+
+
+        //封装sku信息
+        Map<Long, Boolean> finalBooleanMap = booleanMap;
+        List<SkuESMode> skuESModes = skus.stream().map(item -> {
+            SkuESMode skuESMode = new SkuESMode();
+            BeanUtils.copyProperties(item, skuESMode);
+            skuESMode.setSkuPrice(item.getPrice());
+            skuESMode.setSkuImg(item.getSkuDefaultImg());
+
+            //查询出它的当前品牌
+            BrandEntity brandEntity = brandService.getById(item.getBrandId());
+            //查出它的当前分类
+            CategoryEntity categoryEntity = categoryService.getById(item.getCatalogId());
+            //设置库存信息
+            if (finalBooleanMap.isEmpty()) {
+                skuESMode.setHasStock(true);
+            } else {
+                skuESMode.setHasStock(finalBooleanMap.get(item.getSkuId()));
+            }
+
+            //设置热度
+            skuESMode.setHotScore(0L);
+            //设置品牌名称
+            skuESMode.setBrandName(brandEntity.getName());
+            //设置品牌默认图片
+            skuESMode.setBrandImg(brandEntity.getLogo());
+            //设置分类名称
+            skuESMode.setCatalogName(categoryEntity.getName());
+
+            //设置检索属性
+            skuESMode.setAttrs(collect);
+
+            return skuESMode;
+        }).collect(Collectors.toList());
+
+        R statusUp = esSaveFeignService.productStatusUp(skuESModes);
+        if (0 == (Integer) statusUp.get("code")) {
+            //上传ES 成功 修改 商品状态
+            baseMapper.updateStatusById(spuId, UP_ENUM.getCode());
+        } else {
+            //上传失败
+            log.error("远程上传ES失败 {}", statusUp.get("code"));
+            //todo 问题 重复调用问题?接口幂等性 重试机制问题?
+            //1 构造请求数据,将对象转为json    RequestTemplate template = this.buildTemplateFromArgs.create(argv);
+            //2 发送请求进行执行(执行成功会解码数据)  this.executeAndDecode(template, options)
+            //3 执行请求会有重试机制
+            //        while(true) {
+            //            try {
+            //                return this.executeAndDecode(template, options);
+            //            } catch (RetryableException var9) {
+        }
+
+    }
 }

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.gulimail.product.entity.AttrEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,13 +31,21 @@ public interface AttrService extends IService<AttrEntity> {
     /**
      * @param params
      * @param catelogId
-     * @param attrType 类型
+     * @param attrType  类型
      * @return
      */
-    PageUtils baseListPage(Map<String, Object> params, Long catelogId,Integer attrType);
+    PageUtils baseListPage(Map<String, Object> params, Long catelogId, Integer attrType);
 
     AttrResponseVo getAttrVoById(Long attrId);
 
     void updateAttrVo(AttrVo attrVo);
+
+    /**
+     * 在指定的所有集中中挑出我们需要检索的属性
+     *
+     * @param attrIds
+     * @return
+     */
+    List<Long> getSearchAttrs(List<Long> attrIds);
 }
 

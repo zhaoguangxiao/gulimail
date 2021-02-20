@@ -177,4 +177,20 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         }
     }
 
+
+    @Override
+    public List<Long> getSearchAttrs(List<Long> attrIds) {
+
+        //select * from pms_attr where  attr_id in (attrIds) and search_type =1
+
+        QueryWrapper<AttrEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("attr_id", attrIds).and(wrapper -> wrapper.eq("search_type", 1));
+
+        List<AttrEntity> list = this.list(queryWrapper);
+
+        return list.stream().map(item -> {
+            return item.getAttrId();
+        }).collect(Collectors.toList());
+
+    }
 }

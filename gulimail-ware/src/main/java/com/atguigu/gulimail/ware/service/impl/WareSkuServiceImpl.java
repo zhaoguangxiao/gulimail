@@ -1,5 +1,6 @@
 package com.atguigu.gulimail.ware.service.impl;
 
+import com.atguigu.common.to.ware.ResponseSkuHasStockVo;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.Query;
 import com.atguigu.common.utils.R;
@@ -16,6 +17,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service("wareSkuService")
@@ -70,7 +72,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
                 R info = skuInfoService.info(skuId);
                 Map<String, Object> date = (Map<String, Object>) info.get("skuInfo");
                 entity.setSkuName((String) date.get("skuName"));
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
 
@@ -79,7 +81,19 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
             //更新
             wareSkuDao.update(skuId, wareId, skuNum);
         }
+    }
 
 
+    @Override
+    public List<ResponseSkuHasStockVo> getSkuHasStock(List<Long> skuIds) {
+        return skuIds.stream().map(item -> {
+            ResponseSkuHasStockVo skuHasStockVo = new ResponseSkuHasStockVo();
+            //查询当前sku 的总库存量
+            Long count = wareSkuDao.getSkuHasStock(item);
+            skuHasStockVo.setSkuId(item);
+            skuHasStockVo.setHasStock(count == null ? false : count > 0);
+
+            return skuHasStockVo;
+        }).collect(Collectors.toList());
     }
 }

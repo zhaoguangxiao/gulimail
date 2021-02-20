@@ -20,7 +20,8 @@ public enum BizCodeEnume {
 
     UNKNOW_Exception(1000, "系统未知异常"),
     VAILD_Exception(10001, "参数格式校验失败"),
-    DELETION_FAILED(10002, "无法进行删除,含有子分类");
+    DELETION_FAILED(10002, "无法进行删除,含有子分类"),
+    PRODUCT_UP_FAILED(11000,"商品上架异常");
 
     private int code;
     private String message;
