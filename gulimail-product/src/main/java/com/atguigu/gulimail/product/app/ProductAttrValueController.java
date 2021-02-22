@@ -1,7 +1,6 @@
-package com.atguigu.gulimail.product.controller;
+package com.atguigu.gulimail.product.app;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;

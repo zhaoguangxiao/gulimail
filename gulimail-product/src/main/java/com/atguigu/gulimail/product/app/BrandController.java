@@ -1,13 +1,10 @@
-package com.atguigu.gulimail.product.controller;
+package com.atguigu.gulimail.product.app;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
-import com.atguigu.common.vaild.InsertGroup;
 import com.atguigu.common.vaild.UpdateGroup;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;

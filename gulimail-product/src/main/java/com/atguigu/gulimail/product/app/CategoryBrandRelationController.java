@@ -1,4 +1,4 @@
-package com.atguigu.gulimail.product.controller;
+package com.atguigu.gulimail.product.app;
 
 import java.util.Arrays;
 import java.util.List;

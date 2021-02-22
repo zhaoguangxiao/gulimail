@@ -1,4 +1,4 @@
-package com.atguigu.gulimail.product.controller;
+package com.atguigu.gulimail.product.app;
 
 import java.util.Arrays;
 import java.util.List;
@@ -6,15 +6,12 @@ import java.util.Map;
 
 import com.atguigu.common.constant.ProductConstant;
 import com.atguigu.gulimail.product.entity.ProductAttrValueEntity;
-import com.atguigu.gulimail.product.entity.SkuInfoEntity;
 import com.atguigu.gulimail.product.service.ProductAttrValueService;
-import com.atguigu.gulimail.product.service.SkuInfoService;
 import com.atguigu.gulimail.product.vo.AttrResponseVo;
 import com.atguigu.gulimail.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.atguigu.gulimail.product.entity.AttrEntity;
 import com.atguigu.gulimail.product.service.AttrService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.R;

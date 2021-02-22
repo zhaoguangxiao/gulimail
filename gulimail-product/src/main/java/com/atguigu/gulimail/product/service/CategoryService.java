@@ -1,5 +1,6 @@
 package com.atguigu.gulimail.product.service;
 
+import com.atguigu.gulimail.product.vo.ResponseCategoryLog2Vo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.gulimail.product.entity.CategoryEntity;
@@ -33,5 +34,13 @@ public interface CategoryService extends IService<CategoryEntity> {
      * @param category
      */
     void updateCategoryEntityById(CategoryEntity category);
+
+    /**
+     * @return 全部一级分类
+     */
+    List<CategoryEntity> getLevelCategorys();
+
+    Map<String, List<ResponseCategoryLog2Vo>> getCatelogJson();
+
 }
 

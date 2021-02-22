@@ -1,5 +1,8 @@
 # DataSource Config
 spring:
+  redis:
+    host: 192.168.247.111 #配置redis
+    port: 6379
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss  #指定时间格式化
   application:
@@ -13,6 +16,9 @@ spring:
     url: jdbc:mysql://47.103.16.140:3306/guli_pms?useUnicode=true&characterEncoding=UTF-8&useSSL=false
     username: root
     password: Abc123!_
+  thymeleaf:
+    cache: false #关闭 thymeleaf 缓存实时查看效果
+
 server:
   port: 10000
 mybatis-plus:
