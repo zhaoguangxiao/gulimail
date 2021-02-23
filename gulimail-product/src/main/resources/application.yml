@@ -1,5 +1,11 @@
 # DataSource Config
 spring:
+  cache:
+    type: redis #配置spring cache 缓存类别
+    redis:
+      time-to-live: 3600000     #设置redis缓存存活时间 (以毫秒为单位) 1小时后过期 60分钟*60秒*1秒=1000毫秒
+      use-key-prefix: true   #是否使用前缀 默认为true
+      cache-null-values: true  #对空值进行保存,防止缓存穿透
   redis:
     host: 192.168.247.111 #配置redis
     port: 6379
