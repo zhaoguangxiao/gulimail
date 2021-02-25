@@ -1,7 +1,7 @@
 package com.atguigu.gulimail.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.atguigu.gulimail.elasticsearch.GulimailElasticsearchMainApplication;
+import com.atguigu.gulimail.elasticsearch.GulimailElasticsearchMainApplication12000;
 import lombok.Data;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -30,17 +30,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.IOException;
 
 @Slf4j
-@SpringBootTest(classes = GulimailElasticsearchMainApplication.class)
+@SpringBootTest(classes = GulimailElasticsearchMainApplication12000.class)
 @RunWith(SpringRunner.class)
 public class ESCURDTestCase {
 
 
     @Autowired
-    private RestHighLevelClient esRestClient;
+    private RestHighLevelClient restHighLevelClient;
 
     @Test
     public void contextLoags() {
-        Assert.assertNotNull(esRestClient);
+        Assert.assertNotNull(restHighLevelClient);
     }
 
     /**
@@ -54,7 +54,7 @@ public class ESCURDTestCase {
         //数据id
         indexRequest.id("1");
         indexRequest.source("userName", "zs", "age", 18, "gender", "男");
-        IndexResponse response = esRestClient.index(indexRequest, RequestOptions.DEFAULT);
+        IndexResponse response = restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
         log.info("response.status().getStatus() === {}", response.status().getStatus());
         log.info("response === {}", response);
     }
@@ -79,7 +79,7 @@ public class ESCURDTestCase {
         log.info(" SearchSourceBuilder {}", builder);
         searchRequest.indices("bank").source(builder);
         //结果分析
-        SearchResponse response = esRestClient.search(searchRequest, RequestOptions.DEFAULT);
+        SearchResponse response = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
 
         //Map parseObject = JSON.parseObject(response.toString(), Map.class);
         //1 获取所有返回命中的记录

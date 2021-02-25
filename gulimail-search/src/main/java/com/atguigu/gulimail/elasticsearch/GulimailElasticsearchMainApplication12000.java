@@ -7,8 +7,8 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @EnableDiscoveryClient
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
-public class GulimailElasticsearchMainApplication {
+public class GulimailElasticsearchMainApplication12000 {
     public static void main(String[] args) {
-        SpringApplication.run(GulimailElasticsearchMainApplication.class, args);
+        SpringApplication.run(GulimailElasticsearchMainApplication12000.class, args);
     }
 }

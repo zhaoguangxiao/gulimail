@@ -5,5 +5,7 @@ spring:
     nacos:
       discovery:
         server-addr: 47.103.16.140:8848  #配置Nacos 的IP地址
+  thymeleaf:
+    cache: false #关闭 thymeleaf 缓存实时查看效果
 server:
   port: 12000
