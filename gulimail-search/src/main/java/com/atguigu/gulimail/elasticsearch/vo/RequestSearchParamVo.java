@@ -20,7 +20,7 @@ public class RequestSearchParamVo {
      */
     private String sort; //排序条件
 
-    private int hasStock; //是否有货 0-有货 1-无货
+    private Integer hasStock; //是否有货 0-无货 1-有货
     /**
      * skuPrice=1_500 1-500之内的
      * skuPrice=_500 500之内的
@@ -35,6 +35,8 @@ public class RequestSearchParamVo {
 
 
     private Integer pageNum;//页码
+
+    private String queryString; //远程的所有查询条件
 
 
 }

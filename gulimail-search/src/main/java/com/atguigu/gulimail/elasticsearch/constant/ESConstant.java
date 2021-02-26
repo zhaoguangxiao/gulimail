@@ -8,7 +8,7 @@ package com.atguigu.gulimail.elasticsearch.constant;
 public class ESConstant {
 
     public static final String PRODUCT_INDEX = "gulimail_product"; //sku 数据在 es中索引
-    public static final Integer PRODUCT_PAGE_SIZE = 15; //SKU 数据在es 中的索引
+    public static final Integer PRODUCT_PAGE_SIZE = 16; //SKU 数据在es 中的索引
 
 
     //聚合名称
@@ -23,6 +23,9 @@ public class ESConstant {
     public static final String PRODUCT_ATTR_ID_AGGS = "attr_id_aggs"; //在es 中聚合属性
     public static final String PRODUCT_ATTR_NAME_AGGS = "attr_name_aggs"; //在es 中聚合属性
     public static final String PRODUCT_ATTR_VALUE_AGGS = "attr_value_aggs"; //在es 中聚合属性
+
+
+    public static final String SEARCH_ROOT_URL="http://search.gulimail.com/list.html?";
 
 
 }

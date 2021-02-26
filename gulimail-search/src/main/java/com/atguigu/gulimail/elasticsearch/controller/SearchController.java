@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Controller
 public class SearchController {
 
@@ -17,7 +19,10 @@ public class SearchController {
 
 
     @GetMapping(value = "list.html")
-    public String listPage(RequestSearchParamVo requestSearchParamVo, Model model) {
+    public String listPage(RequestSearchParamVo requestSearchParamVo,
+                           HttpServletRequest request,
+                           Model model) {
+        requestSearchParamVo.setQueryString(request.getQueryString());
         ResponseSearchVo responseSearchVo = mailSearchService.search(requestSearchParamVo);
         model.addAttribute("responseSearchVo", responseSearchVo);
         return "list";

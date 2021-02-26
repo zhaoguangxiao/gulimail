@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -56,8 +57,14 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
         // update this
         this.updateById(entity);
         //update brand 品牌
-        categoryBrandRelationService.updateBrandNameByBrandId(entity.getBrandId(),entity.getName());
+        categoryBrandRelationService.updateBrandNameByBrandId(entity.getBrandId(), entity.getName());
 
         //TODO
+    }
+
+
+    @Override
+    public List<BrandEntity> getBybrandIds(List<Long> brandIds) {
+        return this.list(new QueryWrapper<BrandEntity>().in("brand_id", brandIds));
     }
 }

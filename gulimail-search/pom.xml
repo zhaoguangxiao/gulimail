@@ -55,6 +55,13 @@
             <optional>true</optional>
         </dependency>
 
+        <!--     引入远程调用功能   -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+
     </dependencies>
 
 

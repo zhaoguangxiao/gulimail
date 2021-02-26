@@ -1,10 +1,12 @@
 package com.atguigu.gulimail.elasticsearch.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.atguigu.common.to.es.SkuESMode;
+import com.atguigu.common.utils.R;
+import com.atguigu.gulimail.elasticsearch.feign.ProductFeognService;
 import com.atguigu.gulimail.elasticsearch.service.MailSearchService;
-import com.atguigu.gulimail.elasticsearch.vo.RequestSearchParamVo;
-import com.atguigu.gulimail.elasticsearch.vo.ResponseSearchVo;
+import com.atguigu.gulimail.elasticsearch.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.action.search.SearchRequest;
@@ -30,6 +32,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,6 +47,9 @@ public class MailSearchServiceImpl implements MailSearchService {
 
     @Autowired
     private RestHighLevelClient restHighLevelClient;
+
+    @Autowired
+    private ProductFeognService productFeognService;
 
 
     /**
@@ -151,7 +158,10 @@ public class MailSearchServiceImpl implements MailSearchService {
         }
 
         //分页
-        Integer pageNum = null == requestSearchParamVo.getPageNum() ? 1 : requestSearchParamVo.getPageNum();
+        Integer pageNum = requestSearchParamVo.getPageNum();
+        if (null == pageNum || pageNum <= 0) { //如果pageNum <0 设置为第一页
+            pageNum = 1;
+        }
         sourceBuilder.from((pageNum - 1) * PRODUCT_PAGE_SIZE);
         sourceBuilder.size(PRODUCT_PAGE_SIZE);
 
@@ -276,8 +286,122 @@ public class MailSearchServiceImpl implements MailSearchService {
         int division = (int) (total / PRODUCT_PAGE_SIZE);
         Integer totalPage = 0 == surplus ? division : division + 1;
         responseSearchVo.setTotalPages(totalPage);  //设置总页码
-        responseSearchVo.setPageNum(requestSearchParamVo.getPageNum()); //设置页码
+        Integer voPageNum = requestSearchParamVo.getPageNum();
+        responseSearchVo.setPageNum(null == voPageNum ? 1 : voPageNum); //设置页码 如果null 为当页码默认为第一页
+
+
+        //5 保存搜索关键字
+        responseSearchVo.setSearchKeyWord(requestSearchParamVo.getKeyword());
+
+
+        //构建面包屑导航功能
+        if (!CollectionUtils.isEmpty(requestSearchParamVo.getAttrs())) {
+            List<Long> attrIds = responseSearchVo.getAttrIds();
+            List<ResponseSearchVo.NavsVo> navsVos = requestSearchParamVo.getAttrs().stream().map(item -> {
+                ResponseSearchVo.NavsVo navsVo = new ResponseSearchVo.NavsVo();
+                //2_15寸
+                String[] split = item.split("_");
+                navsVo.setNavValue(split[1]);
+                //拿到属性id
+                Long attrId = Long.valueOf(split[0]);
+                //远程调用
+                R info = productFeognService.attrInfo(attrId);
+                log.info("远程调用product-attr 服务结果为 {}", info.get("attr"));
+                ResponseAttrVo attrVo = JSON.parseObject(JSON.toJSONString(info.get("attr")), new TypeReference<ResponseAttrVo>() {
+                });
+                navsVo.setNavName(attrVo.getAttrName());
+                //拿到所有查询条件,去掉当前
+                //attrs=15_以官网信息为准
+                String newUrl = replaceQueryString("attrs", item, requestSearchParamVo.getQueryString());
+                navsVo.setNavHref(newUrl);//设置跳转地方
+
+                attrIds.add(attrId);//把请求参数分析添加进集合
+                return navsVo;
+            }).collect(Collectors.toList());
+            responseSearchVo.setNavs(navsVos);
+        }
+
+        //品牌添加到面包屑导航
+        List<Long> brandIds = requestSearchParamVo.getBrandId();
+        if (!CollectionUtils.isEmpty(brandIds)) {
+            //拿到面包屑导航
+            List<ResponseSearchVo.NavsVo> navs = responseSearchVo.getNavs();
+            ResponseSearchVo.NavsVo vo = new ResponseSearchVo.NavsVo();
+            vo.setNavName("品牌");
+            //远程查询
+            R idSInfo = productFeognService.brandIdSInfo(brandIds);
+            log.info("远程调用商品服务获取brandName 结果为{}", idSInfo.get("brand"));
+            List<ResponseBrandVo> brandVos = JSON.parseObject(JSON.toJSONString(idSInfo.get("brand")), new TypeReference<List<ResponseBrandVo>>() {
+            });
+            if (!CollectionUtils.isEmpty(brandVos)) {
+                StringBuffer sb = new StringBuffer();
+                String newUrl = null;
+                for (ResponseBrandVo item : brandVos) {
+                    sb.append(item.getName());
+                    //替换
+                    newUrl = replaceQueryString("brandId", item.getBrandId().toString(), requestSearchParamVo.getQueryString());
+                }
+                vo.setNavValue(sb.toString());
+                vo.setNavHref(newUrl);
+            }
+            navs.add(vo);
+        }
+
+        //将分类添加到面包屑
+        Long catalog3Id = requestSearchParamVo.getCatalog3Id();
+        if (null != catalog3Id) {
+            List<ResponseSearchVo.NavsVo> navs = responseSearchVo.getNavs();
+            ResponseSearchVo.NavsVo vo = new ResponseSearchVo.NavsVo();
+            vo.setNavName("分类");
+            R info = productFeognService.categoryInfo(catalog3Id);
+            log.info("远程调用商品微服务查询的分类结果为:{}", info.get("category"));
+            ResponseCategoryVo categoryVo = JSON.parseObject(JSON.toJSONString(info.get("category")), new TypeReference<ResponseCategoryVo>() {
+            });
+
+
+            vo.setNavValue(categoryVo.getName());
+            String queryStringUrl = replaceQueryString("catalog3Id", catalog3Id.toString(), requestSearchParamVo.getQueryString());
+            vo.setNavHref(queryStringUrl);
+            navs.add(vo);
+        }
+
         return responseSearchVo;
+    }
+
+    /**
+     * @param result 需要截取的字符串
+     * @param spit   以什么类型结尾的
+     * @return 返回的结果
+     */
+    private String stringEndWith(String result, String spit) {
+        if (!StringUtils.isEmpty(result) && result.endsWith(spit)) {
+            //截取最后的 &符号
+            return result.subSequence(0, result.length() - 1).toString();
+        }
+        return result;
+    }
+
+    /**
+     * @param key     截取的key
+     * @param thisVal 当前需要转换的值
+     * @param replVal 需要替换的值
+     * @return
+     */
+    private String replaceQueryString(String key, String thisVal, String replVal) {
+        String navHrefUrl = null;
+        try {
+            //对浏览器空格编码和java不一样
+            String encode = URLEncoder.encode(thisVal, "utf-8").replace("+", "%20");
+            String queryString = replVal.replace(key + "=" + encode, "");
+            //截取最后一个字符
+            queryString = stringEndWith(queryString, "&");
+            navHrefUrl = SEARCH_ROOT_URL + queryString;
+            //截取最后一个字符
+            navHrefUrl = stringEndWith(navHrefUrl, "?");
+        } catch (UnsupportedEncodingException e) {
+            log.error("对浏览器query进行编码转换异常{}", e.getMessage());
+        }
+        return navHrefUrl;
     }
 
 }
