@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.atguigu.common.vo.ResponseThreeLeveVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -89,8 +90,9 @@ public class CategoryController {
 
     /**
      * 删除
-     * @RequestBody  : 获取请求体,必须发送 post 请求
-     *  springmvc 会自动将请求体内的json数据 转为对应的对象
+     *
+     * @RequestBody : 获取请求体,必须发送 post 请求
+     * springmvc 会自动将请求体内的json数据 转为对应的对象
      */
     @RequestMapping("/delete")
     //@RequiresPermissions("product:category:delete")
@@ -98,6 +100,12 @@ public class CategoryController {
         //categoryService.removeByIds(Arrays.asList(catIds));
         categoryService.removeMenuByIds(Arrays.asList(catIds));
         return R.ok();
+    }
+
+    @GetMapping("threeleve/category")
+    public R ThreeLeveCategory() {
+        List<ResponseThreeLeveVo> responseThreeLeveVo = categoryService.threeLeaveCategory();
+        return R.ok().put("category", responseThreeLeveVo);
     }
 
 }

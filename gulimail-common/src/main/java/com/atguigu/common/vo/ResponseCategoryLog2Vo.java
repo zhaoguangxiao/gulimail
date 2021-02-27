@@ -1,4 +1,4 @@
-package com.atguigu.gulimail.product.vo;
+package com.atguigu.common.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

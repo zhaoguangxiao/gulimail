@@ -1,6 +1,7 @@
 package com.atguigu.gulimail.product.service;
 
-import com.atguigu.gulimail.product.vo.ResponseCategoryLog2Vo;
+import com.atguigu.common.vo.ResponseCategoryLog2Vo;
+import com.atguigu.common.vo.ResponseThreeLeveVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.gulimail.product.entity.CategoryEntity;
@@ -41,6 +42,11 @@ public interface CategoryService extends IService<CategoryEntity> {
     List<CategoryEntity> getLevelCategorys();
 
     Map<String, List<ResponseCategoryLog2Vo>> getCatelogJson();
+
+    /**
+     * @return 返回三级分类
+     */
+    List<ResponseThreeLeveVo> threeLeaveCategory();
 
 }
 

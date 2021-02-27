@@ -1,7 +1,11 @@
 package com.atguigu.gulimail.elasticsearch.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.atguigu.common.to.es.SkuESMode;
+import com.atguigu.common.utils.R;
+import com.atguigu.common.vo.ResponseThreeLeveVo;
+import com.atguigu.gulimail.elasticsearch.feign.ProductFeognService;
 import com.atguigu.gulimail.elasticsearch.service.ProductSaveService;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -28,6 +32,10 @@ public class ProductSaveServiceImpl implements ProductSaveService {
 
     @Autowired
     private RestHighLevelClient restHighLevelClient;
+
+
+    @Autowired
+    private ProductFeognService productFeognService;
 
     @Override
     public boolean saveProductES(List<SkuESMode> skuESModes) throws IOException {
@@ -57,4 +65,12 @@ public class ProductSaveServiceImpl implements ProductSaveService {
     }
 
 
+    @Override
+    public List<ResponseThreeLeveVo> finCategoryLeveList() {
+        R r = productFeognService.ThreeLeveCategory();
+        log.info("远程调用商品服务 得到三级分类结果为 {}",r.get("category"));
+        List<ResponseThreeLeveVo> responseThreeLeveVo = JSON.parseObject(JSON.toJSONString(r.get("category")), new TypeReference<List<ResponseThreeLeveVo>>() {
+        });
+        return responseThreeLeveVo;
+    }
 }

@@ -22,4 +22,9 @@ public interface ProductFeognService {
     @GetMapping("product/category/info/{catId}")
     public R categoryInfo(@PathVariable("catId") Long catId);
 
+
+
+    @GetMapping("product/category/threeleve/category")
+    public R ThreeLeveCategory() ;
+
 }

@@ -2,7 +2,6 @@ package com.atguigu.gulimail.product.web;
 
 import com.atguigu.gulimail.product.entity.CategoryEntity;
 import com.atguigu.gulimail.product.service.CategoryService;
-import com.atguigu.gulimail.product.vo.ResponseCategoryLog2Vo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -4,11 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.Query;
+import com.atguigu.common.vo.ResponseCategoryLog2Vo;
+import com.atguigu.common.vo.ResponseThreeLeveVo;
 import com.atguigu.gulimail.product.dao.CategoryDao;
 import com.atguigu.gulimail.product.entity.CategoryEntity;
 import com.atguigu.gulimail.product.service.CategoryBrandRelationService;
 import com.atguigu.gulimail.product.service.CategoryService;
-import com.atguigu.gulimail.product.vo.ResponseCategoryLog2Vo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -99,7 +100,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      */
     @Caching(evict = {
             @CacheEvict(cacheNames = {"category"}, key = "'getLevelCategorys'"),
-            @CacheEvict(cacheNames = {"category"}, key = "'getCatelogJson'")
+            @CacheEvict(cacheNames = {"category"}, key = "'getCatelogJson'"),
+            @CacheEvict(cacheNames = {"category"}, key = "'threeLeaveCategory'")
     })
     @Override
     @Transactional
@@ -156,7 +158,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return this.list(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
     }
 
-    /** 解决缓存击穿 ---sync 加锁
+    /**
+     * 解决缓存击穿 ---sync 加锁
+     *
      * @return
      */
     @Cacheable(cacheNames = "category", key = "#root.method.name", sync = true)
@@ -173,33 +177,38 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return categorys.stream().collect(Collectors.toMap(k -> {
             return k.getCatId().toString();
         }, v -> {
-            List<ResponseCategoryLog2Vo> collect = null;
-            //拿到1级分类下面的所有的2分类
-            List<CategoryEntity> categoryEntities = getParent_cid(categoryEntityLists, v.getCatId());
-            if (!categoryEntities.isEmpty()) {
-                collect = categoryEntities.stream().map(item -> {
-                    ResponseCategoryLog2Vo categoryLog2Vo1 = new ResponseCategoryLog2Vo();
-                    categoryLog2Vo1.setCatalog1Id(v.getCatId().toString());
-                    categoryLog2Vo1.setName(item.getName());
-                    categoryLog2Vo1.setId(item.getCatId().toString());
-                    //拿到2级分类下面的所有的3分类
-                    List<ResponseCategoryLog2Vo.CategoryLog3Vo> log3Vos = null;
-                    List<CategoryEntity> categoryEntityList = getParent_cid(categoryEntityLists, item.getCatId());
-                    if (!categoryEntityList.isEmpty()) {
-                        log3Vos = categoryEntityList.stream().map(each -> {
-                            ResponseCategoryLog2Vo.CategoryLog3Vo log3Vo = new ResponseCategoryLog2Vo.CategoryLog3Vo();
-                            log3Vo.setId(each.getCatId().toString());
-                            log3Vo.setName(each.getName());
-                            log3Vo.setCatalog2Id(item.getCatId().toString());
-                            return log3Vo;
-                        }).collect(Collectors.toList());
-                    }
-                    categoryLog2Vo1.setCatalog3List(log3Vos);
-                    return categoryLog2Vo1;
-                }).collect(Collectors.toList());
-            }
+            List<ResponseCategoryLog2Vo> collect = getResponseCategoryLog2Vos(categoryEntityLists, v);
             return collect;
         }));
+    }
+
+    private List<ResponseCategoryLog2Vo> getResponseCategoryLog2Vos(List<CategoryEntity> categoryEntityLists, CategoryEntity v) {
+        List<ResponseCategoryLog2Vo> collect = null;
+        //拿到1级分类下面的所有的2分类
+        List<CategoryEntity> categoryEntities = getParent_cid(categoryEntityLists, v.getCatId());
+        if (!categoryEntities.isEmpty()) {
+            collect = categoryEntities.stream().map(item -> {
+                ResponseCategoryLog2Vo categoryLog2Vo1 = new ResponseCategoryLog2Vo();
+                categoryLog2Vo1.setCatalog1Id(v.getCatId().toString());
+                categoryLog2Vo1.setName(item.getName());
+                categoryLog2Vo1.setId(item.getCatId().toString());
+                //拿到2级分类下面的所有的3分类
+                List<ResponseCategoryLog2Vo.CategoryLog3Vo> log3Vos = null;
+                List<CategoryEntity> categoryEntityList = getParent_cid(categoryEntityLists, item.getCatId());
+                if (!categoryEntityList.isEmpty()) {
+                    log3Vos = categoryEntityList.stream().map(each -> {
+                        ResponseCategoryLog2Vo.CategoryLog3Vo log3Vo = new ResponseCategoryLog2Vo.CategoryLog3Vo();
+                        log3Vo.setId(each.getCatId().toString());
+                        log3Vo.setName(each.getName());
+                        log3Vo.setCatalog2Id(item.getCatId().toString());
+                        return log3Vo;
+                    }).collect(Collectors.toList());
+                }
+                categoryLog2Vo1.setCatalog3List(log3Vos);
+                return categoryLog2Vo1;
+            }).collect(Collectors.toList());
+        }
+        return collect;
     }
 
     private List<CategoryEntity> getParent_cid(List<CategoryEntity> categoryEntityLists, Long parent_cid) {
@@ -302,35 +311,37 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         Map<String, List<ResponseCategoryLog2Vo>> listMap = categorys.stream().collect(Collectors.toMap(k -> {
             return k.getCatId().toString();
         }, v -> {
-            List<ResponseCategoryLog2Vo> collect = null;
-            //拿到1级分类下面的所有的2分类
-            List<CategoryEntity> categoryEntities = getParent_cid(categoryEntityLists, v.getCatId());
-            if (!categoryEntities.isEmpty()) {
-                collect = categoryEntities.stream().map(item -> {
-                    ResponseCategoryLog2Vo categoryLog2Vo1 = new ResponseCategoryLog2Vo();
-                    categoryLog2Vo1.setCatalog1Id(v.getCatId().toString());
-                    categoryLog2Vo1.setName(item.getName());
-                    categoryLog2Vo1.setId(item.getCatId().toString());
-                    //拿到2级分类下面的所有的3分类
-                    List<ResponseCategoryLog2Vo.CategoryLog3Vo> log3Vos = null;
-                    List<CategoryEntity> categoryEntityList = getParent_cid(categoryEntityLists, item.getCatId());
-                    if (!categoryEntityList.isEmpty()) {
-                        log3Vos = categoryEntityList.stream().map(each -> {
-                            ResponseCategoryLog2Vo.CategoryLog3Vo log3Vo = new ResponseCategoryLog2Vo.CategoryLog3Vo();
-                            log3Vo.setId(each.getCatId().toString());
-                            log3Vo.setName(each.getName());
-                            log3Vo.setCatalog2Id(item.getCatId().toString());
-                            return log3Vo;
-                        }).collect(Collectors.toList());
-                    }
-                    categoryLog2Vo1.setCatalog3List(log3Vos);
-                    return categoryLog2Vo1;
-                }).collect(Collectors.toList());
-            }
+            List<ResponseCategoryLog2Vo> collect = getResponseCategoryLog2Vos(categoryEntityLists, v);
             return collect;
         }));
         //将结果放入 redis缓存
         stringRedisTemplate.opsForValue().set("categoryLogJson", JSON.toJSONString(listMap), 1, TimeUnit.DAYS);
         return listMap;
+    }
+
+
+    @Cacheable(cacheNames = "category",key = "#root.methodName", sync = true)
+    @Override
+    public List<ResponseThreeLeveVo> threeLeaveCategory() {
+
+        //拿到全部分类 --通过一次查出全部的分类 减少堆数据库访问次数
+        List<CategoryEntity> categoryEntityLists = this.list();
+
+        //1查出所有一级分类
+        List<CategoryEntity> categorys = getParent_cid(categoryEntityLists, 0L);
+
+        return categorys.stream().map(item -> {
+            ResponseThreeLeveVo responseThreeLeveVo = new ResponseThreeLeveVo();
+            //设置一级分类name
+            responseThreeLeveVo.setCatalog1Name(item.getName());
+            //设置一级分类id
+            responseThreeLeveVo.setCatalog1Id(item.getCatId().toString());
+            //设置二级分类 三级分类
+            List<ResponseCategoryLog2Vo> collect = getResponseCategoryLog2Vos(categoryEntityLists, item);
+            responseThreeLeveVo.setResponseCategoryLog2VoList(collect);
+
+            return responseThreeLeveVo;
+        }).collect(Collectors.toList());
+
     }
 }
