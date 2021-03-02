@@ -80,6 +80,12 @@
         </dependency>
 
 
+        <!--    配置类关联applicatyion.yml文件自动提示    -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
 
     </dependencies>
 

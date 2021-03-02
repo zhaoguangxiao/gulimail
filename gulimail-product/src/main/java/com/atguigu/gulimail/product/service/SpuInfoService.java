@@ -1,5 +1,6 @@
 package com.atguigu.gulimail.product.service;
 
+import com.atguigu.gulimail.product.vo.ResponseItemSkuVo;
 import com.atguigu.gulimail.product.vo.SpuSaveVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.common.utils.PageUtils;
@@ -34,5 +35,6 @@ public interface SpuInfoService extends IService<SpuInfoEntity> {
     PageUtils queryPageCondition(Map<String, Object> params);
 
     void up(Long spuId);
+
 }
 

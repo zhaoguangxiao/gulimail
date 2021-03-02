@@ -1061,7 +1061,7 @@
                                 <a href="#">关注</a>
                             </div>
                             <p class="da">
-                                <a href="#" title="购买AppleCare+，获得原厂2年整机保修(含电池)，和多达2次意外损坏的保修服务。购买勾选：保障服务、原厂保2年。">
+                                <a th:href="|http://item.gulimail.com/${item.skuId}.html|" title="购买AppleCare+，获得原厂2年整机保修(含电池)，和多达2次意外损坏的保修服务。购买勾选：保障服务、原厂保2年。">
                                     <img th:src="${item.skuImg}" class="dim">
                                 </a>
                             </p>
@@ -1073,7 +1073,7 @@
                                 <span th:text="'¥'+${item.skuPrice}">¥5199.00</span>
                             </p>
                             <p class="tab_JE">
-                                <a href="#" title="购买AppleCare+，获得原厂2年整机保修(含电池)，和多达2次意外损坏的保修服务。购买勾选：保障服务、原厂保2年。"
+                                <a th:href="|http://item.gulimail.com/${item.skuId}.html|" title="购买AppleCare+，获得原厂2年整机保修(含电池)，和多达2次意外损坏的保修服务。购买勾选：保障服务、原厂保2年。"
                                    th:utext="${item.skuTitle}">
                                 </a>
                             </p>

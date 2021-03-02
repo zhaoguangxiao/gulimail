@@ -51,3 +51,10 @@ feign:
         read-timeout: 10000
 
 
+
+#配置线程池
+gulimail:
+  thread:
+    core-pool-size: 20
+    maximum-pool-size: 200
+    keep-alive-time: 10

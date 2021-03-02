@@ -3,18 +3,18 @@ package com.atguigu.gulimail.product.service.impl;
 import com.atguigu.common.constant.ProductConstant;
 import com.atguigu.gulimail.product.entity.AttrAttrgroupRelationEntity;
 import com.atguigu.gulimail.product.entity.AttrEntity;
+import com.atguigu.gulimail.product.entity.ProductAttrValueEntity;
 import com.atguigu.gulimail.product.service.AttrAttrgroupRelationService;
 import com.atguigu.gulimail.product.service.AttrService;
+import com.atguigu.gulimail.product.service.ProductAttrValueService;
 import com.atguigu.gulimail.product.vo.AttrGroupRelationVo;
 import com.atguigu.gulimail.product.vo.ResponseAttrGroupWithAttrVo;
+import com.atguigu.gulimail.product.vo.ResponseItemSkuVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -32,6 +32,11 @@ import org.springframework.util.StringUtils;
 
 @Service("attrGroupService")
 public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEntity> implements AttrGroupService {
+
+
+    @Autowired
+    private ProductAttrValueService productAttrValueService;
+
 
     @Autowired
     private AttrAttrgroupRelationService attrAttrgroupRelationService;
@@ -180,14 +185,46 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
         List<AttrGroupEntity> entities = this.list(new QueryWrapper<AttrGroupEntity>().eq("catelog_id", catelogId));
         List<ResponseAttrGroupWithAttrVo> collect = entities.stream().map(item -> {
             ResponseAttrGroupWithAttrVo attrVo = new ResponseAttrGroupWithAttrVo();
-            BeanUtils.copyProperties(item,attrVo);
+            BeanUtils.copyProperties(item, attrVo);
             //获取每个分组下面的具体属性
             List<AttrEntity> groupAndRelationship = findAttrGroupAndRelationship(item.getAttrGroupId());
-            if (!groupAndRelationship.isEmpty()){
+            if (!groupAndRelationship.isEmpty()) {
                 attrVo.setAttrs(groupAndRelationship);
             }
             return attrVo;
         }).collect(Collectors.toList());
         return collect;
+    }
+
+
+    @Override
+    public List<ResponseItemSkuVo.ItemSpuBaseAttrVo> getAttrGroupWithAttrsBySpuId(Long spuId, Long categoryId) {
+        //通过三级分类查询到当前商品属于哪一个分组
+        List<AttrGroupEntity> attrGroupEntities = this.list(new QueryWrapper<AttrGroupEntity>().eq("catelog_id", categoryId));
+        if (!CollectionUtils.isEmpty(attrGroupEntities)) {
+            return attrGroupEntities.stream().map(item -> {
+                ResponseItemSkuVo.ItemSpuBaseAttrVo baseAttrVo = new ResponseItemSkuVo.ItemSpuBaseAttrVo();
+                baseAttrVo.setGroupName(item.getAttrGroupName()); //设置分组名称
+                //2 去pms_attr_attrgroup_relation 查出attrid
+                List<AttrAttrgroupRelationEntity> relationEntities = attrAttrgroupRelationService.list(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_group_id", item.getAttrGroupId()));
+                if (!CollectionUtils.isEmpty(relationEntities)) {//分组数据不为空
+                    //3 pms_product_attr_value 通过 Long spuId, Long categoryId 查出属性values
+                    List<ResponseItemSkuVo.SpuBaseAttrVo> baseAttrVos1 = new ArrayList<>();
+                    for (AttrAttrgroupRelationEntity each : relationEntities) {
+                        ProductAttrValueEntity byCategoryIdAndAttrId = productAttrValueService.findByCategoryIdAndAttrId(spuId, each.getAttrId());
+                        if (null != byCategoryIdAndAttrId) {
+                            ResponseItemSkuVo.SpuBaseAttrVo attrVo = new ResponseItemSkuVo.SpuBaseAttrVo();
+                            attrVo.setAttrName(byCategoryIdAndAttrId.getAttrName());
+                            attrVo.setAttrValue(byCategoryIdAndAttrId.getAttrValue());
+                            baseAttrVos1.add(attrVo);
+                        }
+                    }
+                    baseAttrVo.setSpuBaseAttrVos(baseAttrVos1); //设置基本属性
+                }
+
+                return baseAttrVo;
+            }).collect(Collectors.toList());
+        }
+        return null;
     }
 }

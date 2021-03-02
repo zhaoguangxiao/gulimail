@@ -53,7 +53,7 @@ spring:
         - id: gulimail-host-route
           uri: lb://gulimail-product
           predicates:
-            - Host=gulimail.com
+            - Host=gulimail.com,item.gulimail.com
 
         #配置商城首页 使用的是 nginx -负载->gateway -负载->微服务
         - id: gulimail-search-route
