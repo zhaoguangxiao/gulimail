@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: gulimail-autu-server
+  redis:
+    host: 192.168.247.111  #配置redis
+    port: 6379
+  cloud:
+    nacos: #配置nocos 注册中心
+      discovery:
+        server-addr: 47.103.16.140:8848
+  thymeleaf:
+    cache: false
+server:
+  port: 20000

@@ -60,3 +60,9 @@ spring:
           uri: lb://gulimail-elasticsearch
           predicates:
             - Host=search.gulimail.com
+
+        #配置认证 使用的是 nginx -负载->gateway -负载->微服务
+        - id: gulimail-auth-route
+          uri: lb://gulimail-autu-server
+          predicates:
+            - Host=auth.gulimail.com

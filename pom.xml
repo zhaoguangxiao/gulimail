@@ -23,6 +23,7 @@
         <module>gulimail-generator</module>
         <module>gulimail-third-party</module>
         <module>gulimail-search</module>
+        <module>gulimail-auth-server</module>
     </modules>
 
 

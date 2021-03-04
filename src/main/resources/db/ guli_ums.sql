@@ -69,7 +69,7 @@ CREATE TABLE `ums_integration_history`  (
 DROP TABLE IF EXISTS `ums_user`;
 CREATE TABLE `ums_user`  (
                              `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
-                             `level_id` bigint(20) NULL DEFAULT NULL COMMENT '��Ա�ȼ�id',
+                             `level_id` bigint(20) NULL DEFAULT NULL COMMENT '会员等级id',
                              `username` char(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户名',
                              `password` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码',
                              `salt` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '盐',

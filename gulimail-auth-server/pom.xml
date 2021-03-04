@@ -8,18 +8,22 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <description>后台会员系统</description>
-    <artifactId>gulimail-member</artifactId>
+    <description>认证服务-社交登录-单点登录</description>
+    <artifactId>gulimail-auth-server</artifactId>
 
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
 
     <dependencies>
+
         <!--         引入公共依赖模块       -->
         <dependency>
             <groupId>com.atguigu.gulimail</groupId>
             <artifactId>gulimail-common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-
 
         <!--    测试testcase     -->
         <dependency>
@@ -34,13 +38,28 @@
         </dependency>
 
         <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
         </dependency>
+
+        <!--   模板引擎 thymeleaf    -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+
+        <!--   整合redis     -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 
     </dependencies>

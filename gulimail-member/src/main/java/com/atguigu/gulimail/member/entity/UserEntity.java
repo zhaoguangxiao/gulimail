@@ -25,7 +25,7 @@ public class UserEntity implements Serializable {
 	@TableId
 	private Long id;
 	/**
-	 * ��Ա�ȼ�id
+	 * 会员等级id
 	 */
 	private Long levelId;
 	/**

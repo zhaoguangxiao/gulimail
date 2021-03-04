@@ -11,6 +11,7 @@ package com.atguigu.common.exception;
  * 12:订单
  * 13:购物车
  * 14:物流
+ * 15:用户模块
  *
  * @author Administrator
  * @Date 2021年1月26日15:54:33
@@ -20,8 +21,12 @@ public enum BizCodeEnume {
 
     UNKNOW_Exception(1000, "系统未知异常"),
     VAILD_Exception(10001, "参数格式校验失败"),
+    VAILD_SMS_CODE_Exception(10002, "短信发送过于频繁,请稍后重试"),
     DELETION_FAILED(10002, "无法进行删除,含有子分类"),
-    PRODUCT_UP_FAILED(11000,"商品上架异常");
+    PRODUCT_UP_FAILED(11000, "商品上架异常"),
+    USER_REGISTER_CONTRARY_EXCEPTION(15000, "用户注册出现了意外之外的问题"),
+    USER_EXIST_EXCEPTION(15002, "用户名称已经存在"),
+    PHONE_EXIST_EXCEPTION(15003, "用户手机号已经存在");
 
     private int code;
     private String message;

@@ -1,7 +1,9 @@
 package com.atguigu.gulimail.member.service.impl;
 
 import org.springframework.stereotype.Service;
+
 import java.util.Map;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -11,6 +13,8 @@ import com.atguigu.common.utils.Query;
 import com.atguigu.gulimail.member.dao.UserLevelDao;
 import com.atguigu.gulimail.member.entity.UserLevelEntity;
 import com.atguigu.gulimail.member.service.UserLevelService;
+
+import static com.atguigu.gulimail.member.entity.UserLevelEntity.DEFAULT_STATUS;
 
 
 @Service("userLevelService")
@@ -26,4 +30,9 @@ public class UserLevelServiceImpl extends ServiceImpl<UserLevelDao, UserLevelEnt
         return new PageUtils(page);
     }
 
+
+    @Override
+    public UserLevelEntity getDefaultStatus() {
+        return this.getOne(new QueryWrapper<UserLevelEntity>().eq("default_status", DEFAULT_STATUS));
+    }
 }

@@ -27,6 +27,9 @@ import com.atguigu.common.utils.R;
 @RestController
 @RequestMapping("member/memberlevel")
 public class UserLevelController {
+
+
+
     @Autowired
     private UserLevelService userLevelService;
 

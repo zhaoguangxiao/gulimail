@@ -3,7 +3,10 @@ package com.atguigu.gulimail.member.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.atguigu.gulimail.member.exception.PhoneExistException;
+import com.atguigu.gulimail.member.exception.UserNameExistException;
 import com.atguigu.gulimail.member.feign.CouponService;
+import com.atguigu.gulimail.member.vo.UserRegisterVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +14,8 @@ import com.atguigu.gulimail.member.entity.UserEntity;
 import com.atguigu.gulimail.member.service.UserService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.R;
+
+import static com.atguigu.common.exception.BizCodeEnume.*;
 
 
 /**
@@ -30,6 +35,7 @@ public class UserController {
 
     @Autowired
     private CouponService couponService;
+
 
     @RequestMapping(value = "/coupons")
     public R test() {
@@ -94,6 +100,21 @@ public class UserController {
     public R delete(@RequestBody Long[] ids) {
         userService.removeByIds(Arrays.asList(ids));
 
+        return R.ok();
+    }
+
+
+    @PostMapping("/user/register")
+    public R register(@RequestBody UserRegisterVo userRegisterVo) {
+        try {
+            userService.registerUser(userRegisterVo);
+        } catch (UserNameExistException e) {
+            return R.error(USER_EXIST_EXCEPTION.getCode(), USER_EXIST_EXCEPTION.getMessage());
+        } catch (PhoneExistException e) {
+            return R.error(PHONE_EXIST_EXCEPTION.getCode(), PHONE_EXIST_EXCEPTION.getMessage());
+        } catch (Exception e) {
+            return R.error(USER_REGISTER_CONTRARY_EXCEPTION.getCode(), USER_REGISTER_CONTRARY_EXCEPTION.getMessage());
+        }
         return R.ok();
     }
 

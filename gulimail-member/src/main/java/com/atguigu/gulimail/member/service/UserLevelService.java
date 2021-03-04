@@ -16,5 +16,7 @@ import java.util.Map;
 public interface UserLevelService extends IService<UserLevelEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    UserLevelEntity getDefaultStatus();
 }
 
