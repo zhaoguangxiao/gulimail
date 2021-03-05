@@ -1,10 +1,14 @@
 package com.atguigu.gulimail;
 
+import com.atguigu.common.vo.GithubEntityVo;
 import com.atguigu.gulimail.member.GuliMailMemberApplicationMain8000;
+import com.atguigu.gulimail.member.entity.UserEntity;
 import com.atguigu.gulimail.member.service.UserService;
+import com.atguigu.gulimail.member.vo.UserLoginVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.digest.Md5Crypt;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +24,8 @@ public class UserServiceTestCase {
 
     @Autowired
     private UserService userService;
+
+
 
 
     @Test
@@ -43,6 +49,26 @@ public class UserServiceTestCase {
         log.info("encode 加密后: {}", encode);
         log.info("matches =={}", matches);
     }
+
+
+    @Test
+    public void findOneByUserNameOrPhoneTest(){
+        UserLoginVo loginVo = new UserLoginVo();
+        loginVo.setLoginUserName("liuyan");
+        UserEntity orPhone = userService.findOneByUserNameOrPhone(loginVo);
+        Assert.assertNotNull(orPhone);
+    }
+
+    @Test
+    public void updateUserEntityByOnlyId(){
+        GithubEntityVo entityVo = new GithubEntityVo();
+        entityVo.setAccessToken("123");
+        entityVo.setId(42171393L);
+        UserEntity userEntity = userService.updateUserEntityByOnlyId(entityVo);
+        Assert.assertNotNull(userEntity);
+    }
+
+
 
 
 }

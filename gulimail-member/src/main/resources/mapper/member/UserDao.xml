@@ -24,7 +24,15 @@
         <result property="growth" column="growth"/>
         <result property="status" column="status"/>
         <result property="createTime" column="create_time"/>
+        <result property="onlyId" column="only_id"/>
+        <result property="accessToken" column="access_token"/>
     </resultMap>
+
+    <sql id="userEntity"> id,level_id,username,password,salt,nickname,phone,email,header,gender,birthday,city,job,sign,source_type,integration,growth,status,create_time</sql>
+
+    <select id="selectOneByUserNameOrPhone" resultType="com.atguigu.gulimail.member.entity.UserEntity" parameterType="com.atguigu.gulimail.member.vo.UserLoginVo">
+        select <include refid="userEntity"></include> from ums_user where username=#{loginUserName} or phone=#{loginUserName}
+    </select>
 
 
 </mapper>

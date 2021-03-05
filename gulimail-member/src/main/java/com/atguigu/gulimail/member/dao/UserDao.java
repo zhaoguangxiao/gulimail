@@ -1,6 +1,7 @@
 package com.atguigu.gulimail.member.dao;
 
 import com.atguigu.gulimail.member.entity.UserEntity;
+import com.atguigu.gulimail.member.vo.UserLoginVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -13,5 +14,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface UserDao extends BaseMapper<UserEntity> {
-	
+
+    UserEntity selectOneByUserNameOrPhone(UserLoginVo userLoginVo);
 }

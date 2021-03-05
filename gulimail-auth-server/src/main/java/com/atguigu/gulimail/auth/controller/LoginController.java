@@ -4,6 +4,7 @@ package com.atguigu.gulimail.auth.controller;
 import com.atguigu.common.utils.R;
 import com.atguigu.gulimail.auth.feign.SmsSendFeignService;
 import com.atguigu.gulimail.auth.feign.UserFeignService;
+import com.atguigu.gulimail.auth.vo.UserLoginVo;
 import com.atguigu.gulimail.auth.vo.UserRegisterVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,8 @@ public class LoginController {
 
 
     /**
+     * 注册用户逻辑编写
+     *
      * @param userRegisterVo
      * @param result
      * @param redirectAttributes 重定向数据进行保存
@@ -84,7 +87,7 @@ public class LoginController {
                            RedirectAttributes redirectAttributes) {
         //转发到注册页面
         if (result.hasErrors()) {
-            Map<String, String> stringMap = result.getFieldErrors().stream().collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+            Map<String, String> stringMap = result.getFieldErrors().stream().collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage, (entity1, entity2) -> entity1));
             //这些数据只需要取一次就行了
             redirectAttributes.addFlashAttribute("errors", stringMap);
             //Request method 'POST' not supported
@@ -131,4 +134,30 @@ public class LoginController {
             return "redirect:http://auth.gulimail.com/register.html";
         }
     }
+
+
+    @PostMapping("/login")
+    public String login(@Valid UserLoginVo userLoginVo,
+                        BindingResult result,
+                        RedirectAttributes redirectAttributes
+                        ) {
+
+        if (result.hasErrors()) {
+            Map<String, String> map = result.getFieldErrors().stream().collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage, (entity1, entity2) -> entity1));
+            redirectAttributes.addFlashAttribute("errors", map);
+            return "redirect:http://auth.gulimail.com/login.html";
+        }
+        R login = userFeignService.login(userLoginVo);
+        log.info("远程调用member服务进行登录,结果为{}", login.get("code"));
+        if (Integer.parseInt(login.get("code").toString()) == 0) {
+            //登录成功
+            return "redirect:http://gulimail.com/";
+        }
+        //登录失败跳转 登录页面
+        Map<String, String> map = new HashMap<>();
+        map.put("msg", login.get("msg").toString());
+        redirectAttributes.addFlashAttribute("errors", map);
+        return "redirect:http://auth.gulimail.com/login.html";
+    }
+
 }

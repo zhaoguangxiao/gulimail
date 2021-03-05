@@ -1,7 +1,9 @@
 package com.atguigu.gulimail.member.service;
 
+import com.atguigu.common.vo.GithubEntityVo;
 import com.atguigu.gulimail.member.exception.PhoneExistException;
 import com.atguigu.gulimail.member.exception.UserNameExistException;
+import com.atguigu.gulimail.member.vo.UserLoginVo;
 import com.atguigu.gulimail.member.vo.UserRegisterVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.common.utils.PageUtils;
@@ -23,5 +25,15 @@ public interface UserService extends IService<UserEntity> {
     void registerUser(UserRegisterVo userRegisterVo);
 
     void checkPhoneAndUserName(String phone, String username) throws UserNameExistException, PhoneExistException;
+
+    UserEntity login(UserLoginVo userLoginVo);
+
+    UserEntity findOneByUserNameOrPhone(UserLoginVo userLoginVo);
+
+    UserEntity githubRegister(GithubEntityVo githubEntityVo);
+
+    UserEntity socialContactByOnlyId(GithubEntityVo githubEntityVo);
+
+    UserEntity updateUserEntityByOnlyId(GithubEntityVo githubEntityVo);
 }
 

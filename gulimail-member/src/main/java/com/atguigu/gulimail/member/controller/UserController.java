@@ -3,10 +3,13 @@ package com.atguigu.gulimail.member.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.atguigu.common.vo.GithubEntityVo;
 import com.atguigu.gulimail.member.exception.PhoneExistException;
 import com.atguigu.gulimail.member.exception.UserNameExistException;
 import com.atguigu.gulimail.member.feign.CouponService;
+import com.atguigu.gulimail.member.vo.UserLoginVo;
 import com.atguigu.gulimail.member.vo.UserRegisterVo;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -116,6 +119,28 @@ public class UserController {
             return R.error(USER_REGISTER_CONTRARY_EXCEPTION.getCode(), USER_REGISTER_CONTRARY_EXCEPTION.getMessage());
         }
         return R.ok();
+    }
+
+    @PostMapping("/user/login")
+    public R login(@RequestBody UserLoginVo userLoginVo) {
+        UserEntity userEntity = userService.login(userLoginVo);
+        if (null != userEntity) return R.ok();
+        else return R.error(USER_LOGIN_EXIST_EXCEPTION.getCode(), USER_LOGIN_EXIST_EXCEPTION.getMessage());
+    }
+
+
+    @PostMapping("oauth/github")
+    public R githubLogin(@RequestBody GithubEntityVo githubEntityVo) {
+        //判断当前社交用户是否已经注册过
+        UserEntity entity = userService.socialContactByOnlyId(githubEntityVo);
+        if (null == entity) {
+            //第一次登录需要注册,保存用户信息
+            entity = userService.githubRegister(githubEntityVo);
+        } else {
+            //更新 accessToken
+            entity = userService.updateUserEntityByOnlyId(githubEntityVo);
+        }
+        return R.ok().put("data", entity);
     }
 
 }
