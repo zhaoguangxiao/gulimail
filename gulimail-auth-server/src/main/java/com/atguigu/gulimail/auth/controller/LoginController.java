@@ -1,9 +1,13 @@
 package com.atguigu.gulimail.auth.controller;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.atguigu.common.utils.R;
+import com.atguigu.common.vo.LoginUserVo;
 import com.atguigu.gulimail.auth.feign.SmsSendFeignService;
 import com.atguigu.gulimail.auth.feign.UserFeignService;
+import com.atguigu.gulimail.auth.properties.DomainNameProperties;
 import com.atguigu.gulimail.auth.vo.UserLoginVo;
 import com.atguigu.gulimail.auth.vo.UserRegisterVo;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +20,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.atguigu.common.constant.AuthSmsServerConstant.SMS_CODE_REDIS_CACHE_PREFIX;
+import static com.atguigu.common.constant.LoginUserConstant.LOGIN_USER_KEY;
 import static com.atguigu.common.exception.BizCodeEnume.VAILD_SMS_CODE_Exception;
 
 /**
@@ -33,10 +39,11 @@ import static com.atguigu.common.exception.BizCodeEnume.VAILD_SMS_CODE_Exception
 @Controller
 public class LoginController {
 
+    @Autowired
+    private DomainNameProperties domainNameProperties;
 
     @Autowired
     private SmsSendFeignService smsSendFeignService;
-
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -95,7 +102,7 @@ public class LoginController {
             //重定向 可以解决表单重复提交的问题,但是会造成 model 无法保存数据 ---可以使用RedirectAttributes 进行保存数据
             //重定向 携带数据利用session 原理,将数据放在session,只要跳到下一个页面取出这个数据以后,session这个数据就会删除
             //如果用到session 就会出现分布式session 问题
-            return "redirect:http://auth.gulimail.com/register.html";
+            return "redirect:"+domainNameProperties.getSonRegisterUrl();
         }
 
         //校验验证码
@@ -112,26 +119,26 @@ public class LoginController {
                 Integer.parseInt(r.get("code").toString());
                 if (null != r.get("code") && Integer.parseInt(r.get("code").toString()) == 0) {
                     //重定向到登录页面
-                    return "redirect:http://auth.gulimail.com/login.html";
+                    return "redirect:"+domainNameProperties.getSonLoginUrl();
                 } else {
                     Map<String, String> map = new HashMap<>();
                     map.put("msg", r.get("msg").toString());
                     redirectAttributes.addFlashAttribute("errors", map);
-                    return "redirect:http://auth.gulimail.com/register.html";
+                    return "redirect:"+domainNameProperties.getSonRegisterUrl();
                 }
             } else {
                 //效验出错 --code
                 Map<String, String> map = new HashMap<>();
                 map.put("code", "验证码效验失败");
                 redirectAttributes.addFlashAttribute("errors", map);
-                return "redirect:http://auth.gulimail.com/register.html";
+                return "redirect:"+domainNameProperties.getSonRegisterUrl();
             }
         } else {
             //redis 查询手机号未查询到
             Map<String, String> errors = new HashMap<>();
             errors.put("code", "验证码为空,请重试");
             redirectAttributes.addFlashAttribute("errors", errors);
-            return "redirect:http://auth.gulimail.com/register.html";
+            return "redirect:"+domainNameProperties.getSonRegisterUrl();
         }
     }
 
@@ -139,25 +146,38 @@ public class LoginController {
     @PostMapping("/login")
     public String login(@Valid UserLoginVo userLoginVo,
                         BindingResult result,
-                        RedirectAttributes redirectAttributes
-                        ) {
+                        RedirectAttributes redirectAttributes,
+                        HttpSession session
+    ) {
 
         if (result.hasErrors()) {
             Map<String, String> map = result.getFieldErrors().stream().collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage, (entity1, entity2) -> entity1));
             redirectAttributes.addFlashAttribute("errors", map);
-            return "redirect:http://auth.gulimail.com/login.html";
+            return "redirect:"+domainNameProperties.getSonLoginUrl();
         }
         R login = userFeignService.login(userLoginVo);
         log.info("远程调用member服务进行登录,结果为{}", login.get("code"));
         if (Integer.parseInt(login.get("code").toString()) == 0) {
             //登录成功
-            return "redirect:http://gulimail.com/";
+            Object loginUser = JSON.parseObject(JSON.toJSONString(login.get("data")), new TypeReference<LoginUserVo>() {
+            });
+            session.setAttribute(LOGIN_USER_KEY, loginUser);
+            return "redirect:"+domainNameProperties.getRootUrl();
         }
         //登录失败跳转 登录页面
         Map<String, String> map = new HashMap<>();
         map.put("msg", login.get("msg").toString());
         redirectAttributes.addFlashAttribute("errors", map);
-        return "redirect:http://auth.gulimail.com/login.html";
+        return "redirect:"+domainNameProperties.getSonLoginUrl();
     }
 
+
+    @GetMapping("/login.html")
+    public String loginPath(HttpSession session) {
+        Object attribute = session.getAttribute(LOGIN_USER_KEY);
+        if (null == attribute) {
+            return "login";
+        }
+        return "redirect:"+domainNameProperties.getRootUrl();
+    }
 }

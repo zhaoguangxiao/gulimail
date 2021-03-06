@@ -124,7 +124,7 @@ public class UserController {
     @PostMapping("/user/login")
     public R login(@RequestBody UserLoginVo userLoginVo) {
         UserEntity userEntity = userService.login(userLoginVo);
-        if (null != userEntity) return R.ok();
+        if (null != userEntity) return R.ok().put("data",userEntity);
         else return R.error(USER_LOGIN_EXIST_EXCEPTION.getCode(), USER_LOGIN_EXIST_EXCEPTION.getMessage());
     }
 

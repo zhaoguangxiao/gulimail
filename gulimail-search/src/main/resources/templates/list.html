@@ -15,7 +15,7 @@
 <!--头部-->
 <div class="header_head">
     <div class="header_head_box">
-        <b class="header_head_p">
+        <div class="header_head_p">
             <div style="overflow: hidden">
                 <div style="overflow: hidden">
                     <a href="http://gulimail.com" class="header_head_p_a1" style="width:73px;">
@@ -62,14 +62,23 @@
                     <a href="#">钓鱼岛</a>
                     <a href="#">海外</a>
                 </div>
-        </b>
         <ul>
-            <li>
+            <li th:if="${session.loginUser == null}">
                 <a href="http://auth.gulimail.com/login.html" class="li_2">你好，请登录</a>
             </li>
-            <li>
+            <li th:if="${session.loginUser == null}">
                 <a href="http://auth.gulimail.com/register.html">免费注册</a>
             </li>
+
+
+            <li th:if="${session.loginUser != null}">
+                <a href="#" class="li_2">欢迎，[[${session.loginUser.username}]]</a>
+            </li>
+            <li th:if="${session.loginUser != null}">
+                <a href="#">退出</a>
+            </li>
+
+
             <span>|</span>
             <li>
                 <a href="#">我的订单</a>

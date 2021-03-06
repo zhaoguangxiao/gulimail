@@ -91,11 +91,17 @@
   						</div>
   					</b>
         <ul>
-          <li>
+          <li th:if="${session.loginUser == null}">
             <a href="http://auth.gulimail.com/login.html">你好，请登录</a>
           </li>
-          <li>
+          <li th:if="${session.loginUser == null}">
             <a href="http://auth.gulimail.com/register.html" class="li_2">免费注册</a>
+          </li>
+          <li th:if="${session.loginUser != null}">
+            <a href="#">欢迎，[[${session.loginUser.username}]]</a>
+          </li>
+          <li th:if="${session.loginUser != null}">
+            <a href="#" class="li_2">退出</a>
           </li>
           <span>|</span>
           <li>
