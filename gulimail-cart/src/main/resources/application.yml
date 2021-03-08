@@ -1,0 +1,22 @@
+spring:
+  redis:
+    host: 192.168.247.111 #配置redis
+    port: 6379
+  application:
+    name: gulimail-cart
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 47.103.16.140:8848
+  thymeleaf:
+    cache: false
+  session:
+    store-type: redis
+
+server:
+  port: 30000
+
+domain:
+  name:
+    domainName: gulimail.com #顶级父域名 因为现在在auth.gulimail.com 顶级域名为 gulimail.com 全局生效
+    cookieName: GULIMAIL_SESSION  #cookie在本地显示的名称可以随便设置

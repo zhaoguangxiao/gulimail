@@ -5,9 +5,9 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="static/search/css/index.css">
+    <link rel="stylesheet" href="/static/search/css/index.css">
     <link rel="stylesheet" type="text/css" href="static/search/font/iconfont.css">
-    <!--<script src="./js/jquery-3.2.1.min.js"></script>-->
+    <script src="static/search/js/jquery-3.2.1.min.js"></script>
     <script src="static/search/js/jquery-1.12.4.js"></script>
     <title>谷粒商城搜索页面</title>
 </head>
@@ -15,53 +15,53 @@
 <!--头部-->
 <div class="header_head">
     <div class="header_head_box">
-        <div class="header_head_p">
+        <b class="header_head_p">
             <div style="overflow: hidden">
-                <div style="overflow: hidden">
-                    <a href="http://gulimail.com" class="header_head_p_a1" style="width:73px;">
-                        谷粒商城首页
-                    </a>
-                    <a href="#" class="header_head_p_a">
-                        <!--<img src="img/img_05.png" style="border-radius: 50%;"/>-->
-                        北京</a>
-                </div>
-                <div class="header_head_p_cs">
-                    <a href="#" style="background: #C81623;color: #fff;">北京</a>
-                    <a href="#">上海</a>
-                    <a href="#">天津</a>
-                    <a href="#">重庆</a>
-                    <a href="#">河北</a>
-                    <a href="#">山西</a>
-                    <a href="#">河南</a>
-                    <a href="#">辽宁</a>
-                    <a href="#">吉林</a>
-                    <a href="#">黑龙江</a>
-                    <a href="#">内蒙古</a>
-                    <a href="#">江苏</a>
-                    <a href="#">山东</a>
-                    <a href="#">安徽</a>
-                    <a href="#">浙江</a>
-                    <a href="#">福建</a>
-                    <a href="#">湖北</a>
-                    <a href="#">湖南</a>
-                    <a href="#">广东</a>
-                    <a href="#">广西</a>
-                    <a href="#">江西</a>
-                    <a href="#">四川</a>
-                    <a href="#">海南</a>
-                    <a href="#">贵州</a>
-                    <a href="#">云南</a>
-                    <a href="#">西藏</a>
-                    <a href="#">陕西</a>
-                    <a href="#">甘肃</a>
-                    <a href="#">青海</a>
-                    <a href="#">宁夏</a>
-                    <a href="#">新疆</a>
-                    <a href="#">港澳</a>
-                    <a href="#">台湾</a>
-                    <a href="#">钓鱼岛</a>
-                    <a href="#">海外</a>
-                </div>
+                <a href="http://gulimail.com/" class="header_head_p_a1" style="width:73px;">
+                    谷粒商城首页
+                </a>
+                <a href="#" class="header_head_p_a">
+                    <!--<img src="img/img_05.png" style="border-radius: 50%;"/>-->
+                    北京</a>
+            </div>
+            <div class="header_head_p_cs">
+                <a href="#" style="background: #C81623;color: #fff;">北京</a>
+                <a href="#">上海</a>
+                <a href="#">天津</a>
+                <a href="#">重庆</a>
+                <a href="#">河北</a>
+                <a href="#">山西</a>
+                <a href="#">河南</a>
+                <a href="#">辽宁</a>
+                <a href="#">吉林</a>
+                <a href="#">黑龙江</a>
+                <a href="#">内蒙古</a>
+                <a href="#">江苏</a>
+                <a href="#">山东</a>
+                <a href="#">安徽</a>
+                <a href="#">浙江</a>
+                <a href="#">福建</a>
+                <a href="#">湖北</a>
+                <a href="#">湖南</a>
+                <a href="#">广东</a>
+                <a href="#">广西</a>
+                <a href="#">江西</a>
+                <a href="#">四川</a>
+                <a href="#">海南</a>
+                <a href="#">贵州</a>
+                <a href="#">云南</a>
+                <a href="#">西藏</a>
+                <a href="#">陕西</a>
+                <a href="#">甘肃</a>
+                <a href="#">青海</a>
+                <a href="#">宁夏</a>
+                <a href="#">新疆</a>
+                <a href="#">港澳</a>
+                <a href="#">台湾</a>
+                <a href="#">钓鱼岛</a>
+                <a href="#">海外</a>
+            </div>
+        </b>
         <ul>
             <li th:if="${session.loginUser == null}">
                 <a href="http://auth.gulimail.com/login.html" class="li_2">你好，请登录</a>
@@ -69,8 +69,6 @@
             <li th:if="${session.loginUser == null}">
                 <a href="http://auth.gulimail.com/register.html">免费注册</a>
             </li>
-
-
             <li th:if="${session.loginUser != null}">
                 <a href="#" class="li_2">欢迎，[[${session.loginUser.username}]]</a>
             </li>
@@ -78,15 +76,14 @@
                 <a href="#">退出</a>
             </li>
 
-
             <span>|</span>
             <li>
-                <a href="#">我的订单</a>
+                <a href="http://cart.gulimail.com/cart.html">我的订单</a>
             </li>
             <span>|</span>
             <li class="header_wdjd" style="width:80px;">
                 <a href="#">我的谷粒商城</a>
-                <img src="static/search/image/down-@1x.png"/>
+                <img src="static/search/image/down-@1x.png" />
                 <!--<b class="glyphicon glyphicon-menu-down"></b>-->
                 <div class="header_wdjd_txt">
                     <ul>
@@ -136,7 +133,7 @@
             <span>|</span>
             <li class="header_wdjd1">
                 <a href="#">客户服务</a>
-                <img src="static/search/image/down-@1x.png"/>
+                <img src="static/search/image/down-@1x.png" />
                 <!--<b class="glyphicon glyphicon-menu-down"></b>-->
                 <div class="header_wdjd_txt">
                     <ul>
@@ -192,7 +189,7 @@
             <span>|</span>
             <li class="header_wzdh">
                 <a href="#">网站导航</a>
-                <img src="static/search/image/down-@1x.png"/>
+                <img src="static/search/image/down-@1x.png" />
                 <!--<b class="glyphicon glyphicon-menu-down"></b>-->
                 <div class="header_wzdh_txt">
                     <ul style="width: 25%;">
@@ -399,7 +396,7 @@
             <li class="header_sjjd">
                 <a href="#">手机谷粒商城</a>
                 <div class="header_sjjd_div">
-                    <img src="static/search/img/01.png"/>
+                    <img src="static/search/img/01.png" />
                 </div>
             </li>
         </ul>
@@ -417,7 +414,7 @@
     </div>
     <div class="header_ico">
         <div class="header_gw">
-            <span><a href="#">我的购物车</a></span>
+            <span><a href="http://cart.gulimail.com/cart.html">我的购物车</a></span>
             <img src="static/search/image/settleup-@1x.png"/>
             <span>0</span>
         </div>

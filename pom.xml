@@ -24,6 +24,7 @@
         <module>gulimail-third-party</module>
         <module>gulimail-search</module>
         <module>gulimail-auth-server</module>
+        <module>gulimail-cart</module>
     </modules>
 
 
