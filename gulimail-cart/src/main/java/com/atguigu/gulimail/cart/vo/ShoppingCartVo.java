@@ -43,7 +43,6 @@ public class ShoppingCartVo {
         return count;
     }
 
-
     public Integer getCountType() {
         if (this.shoppingItems.isEmpty()) return 0;
         int count = 0;

@@ -1,6 +1,6 @@
-package com.atguigu.gulimail.product.config;
+package com.atguigu.gulimail.cart.config;
 
-import com.atguigu.gulimail.product.properties.ThreadPoolConfigProperties;
+import com.atguigu.gulimail.cart.properties.ThreadPoolConfigProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

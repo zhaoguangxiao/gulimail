@@ -1,8 +1,6 @@
 package com.atguigu.gulimail.cart.vo;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -12,7 +10,10 @@ import java.util.List;
  */
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ShoppingItems {
+
     private Long skuId;
     private Boolean check; //是否被选中
     private String title; //商品标题
@@ -23,7 +24,6 @@ public class ShoppingItems {
     @Getter(AccessLevel.NONE) //不为 小计生成get 方法 重写get方法
     private BigDecimal totalPrice; //商品小计
     private List<String> skuAttr; //属性集合
-
 
     public BigDecimal getTotalPrice() {
         return this.price.multiply(new BigDecimal("" + this.count));

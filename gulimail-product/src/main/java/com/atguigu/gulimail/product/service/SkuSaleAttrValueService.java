@@ -26,5 +26,7 @@ public interface SkuSaleAttrValueService extends IService<SkuSaleAttrValueEntity
      * @return
      */
     List<ResponseItemSkuVo.ItemSkuSaleAttrVo> getSaleAttrsBySpuId(Long spuId);
+
+    List<String> getSkuSaleAttrValues(Long skuId);
 }
 

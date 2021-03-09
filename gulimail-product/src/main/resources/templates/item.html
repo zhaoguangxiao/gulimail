@@ -58,10 +58,14 @@
                 </li>
             </ul>
             <ul class="header_ul_right">
-                <li style="border: 0;" th:if="${session.loginUser == null}"><a href="http://auth.gulimail.com/login.html" class="aa">你好，请登录</a></li>
-                <li th:if="${session.loginUser == null}"><a href="http://auth.gulimail.com/register.html" style="color: red;">免费注册</a> |</li>
+                <li style="border: 0;" th:if="${session.loginUser == null}"><a
+                        href="http://auth.gulimail.com/login.html" class="aa">你好，请登录</a></li>
+                <li th:if="${session.loginUser == null}"><a href="http://auth.gulimail.com/register.html"
+                                                            style="color: red;">免费注册</a> |
+                </li>
 
-                <li style="border: 0;" th:if="${session.loginUser != null}"><a href="#">欢迎，[[${session.loginUser.username}]]</a></li>
+                <li style="border: 0;" th:if="${session.loginUser != null}"><a href="#">欢迎，[[${session.loginUser.username}]]</a>
+                </li>
                 <li th:if="${session.loginUser != null}"><a href="#" style="color: red;">退出</a> |</li>
 
                 <li><a href="static/item/javascript:;" class="aa">我的订单</a> |</li>
@@ -631,7 +635,7 @@
 
                 <div class="box-btns clear">
                     <div class="box-btns-one">
-                        <input type="text" name="" id="" value="1"/>
+                        <input type="text" name="" id="numInput" value="1"/>
                         <div class="box-btns-one1">
 
                             <div>
@@ -648,7 +652,7 @@
                         </div>
                     </div>
                     <div class="box-btns-two">
-                        <a href="http://cart.gulimail.com/addToCart">
+                        <a href="#" id="addToCart" th:attr="skuId=${responseItemSkuVo.skuInfoEntity.skuId}">
                             加入购物车
                         </a>
                     </div>
@@ -1339,6 +1343,15 @@
     $(function () {
         $("a[class='sku_attr_val']").parent().css({"border": "solid 1px #CCC"});
         $("a[class='sku_attr_val checked']").parent().css({"border": "solid 1px red"});
+    });
+
+
+    $("#addToCart").click(function () {
+        //拿到数量
+        let number = $("#numInput").val();
+        let skuId = $(this).attr("skuId");
+        location.href = "http://cart.gulimail.com/addToCart?skuId=" + skuId + "&num=" + number;
+        return false;
     });
 
 </script>
