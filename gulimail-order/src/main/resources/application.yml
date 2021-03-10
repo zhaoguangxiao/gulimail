@@ -1,10 +1,36 @@
 # DataSource Config
 spring:
+  redis:
+    host: 192.168.247.111 #配置reids
+    port: 6379
+  session:
+    store-type: redis
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 47.103.16.140:8848
+  rabbitmq:
+    listener:
+      simple:
+        acknowledge-mode: manual  #手动消息接收
+    host: 192.168.247.111  #配置rabbitmq 的IP地址
+    username: guest
+    password: guest
+    port: 5672
+    virtual-host: /  #虚拟主机
+    publisher-confirm-type: CORRELATED  #发送端确认模式
+    publisher-returns: true #开启发送消息抵达队列确认
+    template:
+      mandatory: true #如果抵达了这个队列 以异步方法优先回调这个 returnCallback 方法
+  application:
+    name: gulimail-order
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://47.103.16.140:3306/guli_oms?useUnicode=true&characterEncoding=UTF-8&useSSL=false
     username: root
     password: Abc123!_
+  thymeleaf:
+    cache: false #模式缓存 设置为false
 server:
   port: 9000
 mybatis-plus:
@@ -13,3 +39,16 @@ mybatis-plus:
     db-config:
       id-type: auto  #主键类型  AUTO:"数据库ID自增", INPUT:"用户输入ID", ID_WORKER:"全局唯一ID (数字类型唯一ID)", UUID:"全局唯一ID UUID";
 
+
+domain:
+  name:
+    domainName: gulimail.com #顶级父域名 因为现在在auth.gulimail.com 顶级域名为 gulimail.com 全局生效
+    cookieName: GULIMAIL_SESSION  #cookie在本地显示的名称可以随便设置
+
+
+#配置线程池
+gulimail:
+  thread:
+    core-pool-size: 20
+    maximum-pool-size: 200
+    keep-alive-time: 10
