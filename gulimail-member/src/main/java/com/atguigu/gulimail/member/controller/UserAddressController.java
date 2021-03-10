@@ -1,20 +1,16 @@
 package com.atguigu.gulimail.member.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.atguigu.gulimail.member.entity.UserAddressEntity;
 import com.atguigu.gulimail.member.service.UserAddressService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.R;
-
 
 
 /**
@@ -35,7 +31,7 @@ public class UserAddressController {
      */
     @RequestMapping("/list")
     //@RequiresPermissions("member:useraddress:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = userAddressService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -47,8 +43,8 @@ public class UserAddressController {
      */
     @RequestMapping("/info/{id}")
     //@RequiresPermissions("member:useraddress:info")
-    public R info(@PathVariable("id") Long id){
-		UserAddressEntity userAddress = userAddressService.getById(id);
+    public R info(@PathVariable("id") Long id) {
+        UserAddressEntity userAddress = userAddressService.getById(id);
 
         return R.ok().put("userAddress", userAddress);
     }
@@ -58,8 +54,8 @@ public class UserAddressController {
      */
     @RequestMapping("/save")
     //@RequiresPermissions("member:useraddress:save")
-    public R save(@RequestBody UserAddressEntity userAddress){
-		userAddressService.save(userAddress);
+    public R save(@RequestBody UserAddressEntity userAddress) {
+        userAddressService.save(userAddress);
 
         return R.ok();
     }
@@ -69,9 +65,8 @@ public class UserAddressController {
      */
     @RequestMapping("/update")
     //@RequiresPermissions("member:useraddress:update")
-    public R update(@RequestBody UserAddressEntity userAddress){
-		userAddressService.updateById(userAddress);
-
+    public R update(@RequestBody UserAddressEntity userAddress) {
+        userAddressService.updateById(userAddress);
         return R.ok();
     }
 
@@ -80,10 +75,23 @@ public class UserAddressController {
      */
     @RequestMapping("/delete")
     //@RequiresPermissions("member:useraddress:delete")
-    public R delete(@RequestBody Long[] ids){
-		userAddressService.removeByIds(Arrays.asList(ids));
+    public R delete(@RequestBody Long[] ids) {
+        userAddressService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
+    }
+
+
+    /**
+     * 根据用户id 查询出全部的用户收货地址
+     *
+     * @param userId
+     * @return
+     */
+    @GetMapping("/{userId}")
+    public R userAddressByUserId(@PathVariable("userId") Long userId) {
+        List<UserAddressEntity> userAddressEntities = userAddressService.listUserAddressByUserId(userId);
+        return R.ok().put("data",userAddressEntities);
     }
 
 }

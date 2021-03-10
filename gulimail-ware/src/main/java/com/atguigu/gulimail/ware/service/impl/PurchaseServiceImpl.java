@@ -23,6 +23,7 @@ import com.atguigu.gulimail.ware.dao.PurchaseDao;
 import com.atguigu.gulimail.ware.entity.PurchaseEntity;
 import com.atguigu.gulimail.ware.service.PurchaseService;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 
 @Slf4j
@@ -95,7 +96,7 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseDao, PurchaseEntity
         //1查询当前采购项下全部的采购单  2判断采购单状态是否为0 1
         //List<PurchaseDetailEntity> purchaseDetailEntities = purchaseDetailService.listAvailableStatus(items);
 
-        if (!items.isEmpty()) {
+        if (!CollectionUtils.isEmpty(items)) {
             List<PurchaseDetailEntity> purchaseDetailEntityList = items.stream().map(item -> {
                 PurchaseDetailEntity detailEntity = new PurchaseDetailEntity();
                 detailEntity.setId(item);
@@ -137,7 +138,7 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseDao, PurchaseEntity
 
         collect.forEach(each -> {
             List<PurchaseDetailEntity> detailEntities = purchaseDetailService.listDetailByPurchaseId(each.getId());
-            if (!detailEntities.isEmpty()) {
+            if (!CollectionUtils.isEmpty(detailEntities)) {
                 List<PurchaseDetailEntity> purchaseDetailEntities = detailEntities.stream().map(item -> {
                     PurchaseDetailEntity entity = new PurchaseDetailEntity();
                     entity.setId(item.getId());
@@ -159,7 +160,7 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseDao, PurchaseEntity
         Long id = requestPurchaseFinshVo.getId();
         //2 改变该采购项 状态
         List<PurchaseItemDoneVo> items = requestPurchaseFinshVo.getItems();
-        if (!items.isEmpty()) {
+        if (!CollectionUtils.isEmpty(items)) {
             List<PurchaseDetailEntity> updates = new ArrayList<>();
             for (PurchaseItemDoneVo each : items) {
                 PurchaseDetailEntity detailEntity = new PurchaseDetailEntity();

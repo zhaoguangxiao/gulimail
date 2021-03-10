@@ -24,6 +24,7 @@ import com.atguigu.common.utils.Query;
 import com.atguigu.gulimail.coupon.dao.SkuFullReductionDao;
 import com.atguigu.gulimail.coupon.entity.SkuFullReductionEntity;
 import com.atguigu.gulimail.coupon.service.SkuFullReductionService;
+import org.springframework.util.CollectionUtils;
 
 
 @Service("skuFullReductionService")
@@ -71,7 +72,7 @@ public class SkuFullReductionServiceImpl extends ServiceImpl<SkuFullReductionDao
 
         //sms_member_price
         List<MemberPrice> memberPrice = skuReductionTo.getMemberPrice();
-        if (!memberPrice.isEmpty()) {
+        if (!CollectionUtils.isEmpty(memberPrice)) {
             List<MemberPriceEntity> priceEntities = memberPrice.stream().map(item -> {
                 MemberPriceEntity priceEntity = new MemberPriceEntity();
                 priceEntity.setSkuId(skuReductionTo.getSkuId());

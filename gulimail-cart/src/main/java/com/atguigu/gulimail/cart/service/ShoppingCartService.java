@@ -3,6 +3,7 @@ package com.atguigu.gulimail.cart.service;
 import com.atguigu.gulimail.cart.vo.ShoppingCartVo;
 import com.atguigu.gulimail.cart.vo.ShoppingItems;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public interface ShoppingCartService {
@@ -57,4 +58,11 @@ public interface ShoppingCartService {
      * @param skuId
      */
     void deleteCartItemBySkuId(Long skuId);
+
+    /**
+     * 获取当前用户的全部购物车数据
+     *
+     * @return
+     */
+    List<ShoppingItems> getUserCartItems();
 }

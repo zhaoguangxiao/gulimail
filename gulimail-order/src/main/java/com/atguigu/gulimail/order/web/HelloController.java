@@ -7,10 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HelloController {
 
 
-    @GetMapping("/confirm.html")
-    public String confirmPage() {
-        return "confirm";
-    }
+
 
     @GetMapping("/detail.html")
     public String detailPage() {

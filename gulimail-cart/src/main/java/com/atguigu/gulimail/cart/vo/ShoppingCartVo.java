@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -35,7 +36,7 @@ public class ShoppingCartVo {
 
 
     public Integer getCountNum() {
-        if (this.shoppingItems.isEmpty()) return 0;
+        if (CollectionUtils.isEmpty(shoppingItems)) return 0;
         int count = 0;
         for (ShoppingItems item : this.shoppingItems) {
             count += item.getCount();
@@ -44,7 +45,7 @@ public class ShoppingCartVo {
     }
 
     public Integer getCountType() {
-        if (this.shoppingItems.isEmpty()) return 0;
+        if (CollectionUtils.isEmpty(shoppingItems)) return 0;
         int count = 0;
         for (ShoppingItems item : this.shoppingItems) {
             count += 1;
@@ -54,11 +55,13 @@ public class ShoppingCartVo {
 
     public BigDecimal getTotalAmount() {
         BigDecimal decimal = new BigDecimal("0");
-        if (!shoppingItems.isEmpty()) {
+        if (!CollectionUtils.isEmpty(shoppingItems)) {
             //1 计算购物项总价
             for (ShoppingItems item : this.shoppingItems) {
-                BigDecimal totalPrice = item.getTotalPrice();
-                decimal = decimal.add(totalPrice);
+                if (item.getCheck()){
+                    BigDecimal totalPrice = item.getTotalPrice();
+                    decimal = decimal.add(totalPrice);
+                }
             }
         }
         //2减去 优惠总价

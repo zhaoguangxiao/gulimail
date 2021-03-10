@@ -74,7 +74,24 @@
 
 				</ul>
 				<ul class="header-right">
-					<li>尚硅谷<img src="static/order/confirm/img/03.png" style="margin-bottom: 0px;margin-left3: 3px;" /><img src="static/order/confirm/img/06.png" /></li>
+
+					<li style="border: 0;" th:if="${session.loginUser == null}">
+						<a href="http://auth.gulimail.com/login.html" class="aa">你好，请登录</a>
+					</li>
+					<li th:if="${session.loginUser == null}">
+						<a href="http://auth.gulimail.com/register.html" style="color: red;">免费注册</a> |</li>
+					<li>
+
+					<li style="border: 0;" th:if="${session.loginUser != null}">
+						<a href="#" class="aa">[[${session.loginUser.username}]]</a>
+					<img src="static/order/confirm/img/03.png" style="margin-bottom: 0px;margin-left3: 3px;" />
+					<img src="static/order/confirm/img/06.png" />
+					</li>
+					<li th:if="${session.loginUser != null}">
+						<a href="#" style="color: red;">退出</a></li>
+					<li>
+
+
 					<li>|</li>
 					<li class="spacer"></li>
 					<li><a href="">我的订单</a></li>

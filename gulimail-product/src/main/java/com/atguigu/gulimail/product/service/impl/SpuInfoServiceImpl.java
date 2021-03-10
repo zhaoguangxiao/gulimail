@@ -24,6 +24,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
@@ -135,7 +136,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         //保存积分信息 guli_sms库 --sms_sku_bounds
         List<Skus> skus = spuSaveVo.getSkus();
         //5 保存当前spu 对应的所有sku信息
-        if (!skus.isEmpty()) {
+        if (!CollectionUtils.isEmpty(skus)) {
             //获取图片集合
             skus.forEach(each -> {
                 //获取当前默认图片

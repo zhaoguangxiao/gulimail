@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.gulimail.product.entity.SkuInfoEntity;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -25,11 +26,20 @@ public interface SkuInfoService extends IService<SkuInfoEntity> {
     List<SkuInfoEntity> getSkuBySpuId(Long spuId);
 
 
-
-    /** 使用异步编排进行查询
+    /**
+     * 使用异步编排进行查询
+     *
      * @param skuid
      * @return 详情页面的全部数据
      */
     ResponseItemSkuVo item(Long skuid) throws ExecutionException, InterruptedException;
+
+    /**
+     * 根据skuid 获取当前商品的价格
+     *
+     * @param skuId
+     * @return
+     */
+    BigDecimal getPriceBySkuId(Long skuId);
 }
 

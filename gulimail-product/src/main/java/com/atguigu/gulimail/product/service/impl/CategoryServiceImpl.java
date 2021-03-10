@@ -24,6 +24,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
@@ -186,7 +187,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         List<ResponseCategoryLog2Vo> collect = null;
         //拿到1级分类下面的所有的2分类
         List<CategoryEntity> categoryEntities = getParent_cid(categoryEntityLists, v.getCatId());
-        if (!categoryEntities.isEmpty()) {
+        if (!CollectionUtils.isEmpty(categoryEntities)) {
             collect = categoryEntities.stream().map(item -> {
                 ResponseCategoryLog2Vo categoryLog2Vo1 = new ResponseCategoryLog2Vo();
                 categoryLog2Vo1.setCatalog1Id(v.getCatId().toString());
@@ -195,7 +196,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                 //拿到2级分类下面的所有的3分类
                 List<ResponseCategoryLog2Vo.CategoryLog3Vo> log3Vos = null;
                 List<CategoryEntity> categoryEntityList = getParent_cid(categoryEntityLists, item.getCatId());
-                if (!categoryEntityList.isEmpty()) {
+                if (!CollectionUtils.isEmpty(categoryEntityList)) {
                     log3Vos = categoryEntityList.stream().map(each -> {
                         ResponseCategoryLog2Vo.CategoryLog3Vo log3Vo = new ResponseCategoryLog2Vo.CategoryLog3Vo();
                         log3Vo.setId(each.getCatId().toString());

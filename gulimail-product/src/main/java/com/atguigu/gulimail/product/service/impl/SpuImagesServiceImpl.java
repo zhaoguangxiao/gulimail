@@ -15,6 +15,7 @@ import com.atguigu.common.utils.Query;
 import com.atguigu.gulimail.product.dao.SpuImagesDao;
 import com.atguigu.gulimail.product.entity.SpuImagesEntity;
 import com.atguigu.gulimail.product.service.SpuImagesService;
+import org.springframework.util.CollectionUtils;
 
 
 @Service("spuImagesService")
@@ -32,7 +33,7 @@ public class SpuImagesServiceImpl extends ServiceImpl<SpuImagesDao, SpuImagesEnt
 
     @Override
     public void saveImages(Long spuId, List<String> images) {
-        if (!images.isEmpty()) {
+        if (!CollectionUtils.isEmpty(images)) {
             List<SpuImagesEntity> entities = images.stream().map(item -> {
                 SpuImagesEntity imagesEntity = new SpuImagesEntity();
                 imagesEntity.setSpuId(spuId);

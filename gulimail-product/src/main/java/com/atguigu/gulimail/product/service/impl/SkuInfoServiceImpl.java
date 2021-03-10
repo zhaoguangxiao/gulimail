@@ -170,11 +170,16 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
         }, threadPoolExecutor);
 
 
-
         //等待所有任务完成
         CompletableFuture.allOf(saleAttrFuture, descFuture, attrFuture, imagesFuture, wareskuFuture).get();
 
 
         return itemSkuVo;
+    }
+
+
+    @Override
+    public BigDecimal getPriceBySkuId(Long skuId) {
+        return this.getById(skuId).getPrice();
     }
 }

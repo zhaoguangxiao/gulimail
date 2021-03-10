@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -169,7 +170,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
      */
     private List<ShoppingItems> getCartItems(String key) {
         BoundHashOperations<String, Object, Object> ops = stringRedisTemplate.boundHashOps(key);
-        if (!ops.values().isEmpty()) {
+        if (!CollectionUtils.isEmpty(ops.values())) {
             List<ShoppingItems> shoppingItems = ops.values().stream().map(item -> {
                 return JSON.parseObject(item.toString(), ShoppingItems.class);
             }).collect(Collectors.toList());
@@ -211,5 +212,32 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         if (null != itemBySkuId) {
             cartOps.delete(skuId.toString());
         }
+    }
+
+    @Override
+    public List<ShoppingItems> getUserCartItems() {
+        //得到当前的用户信息
+        UserInfoTo infoTo = ShoppingCartInterceptor.userInfoToThreadLocal.get();
+        if (infoTo.getUserId() != null) {
+            //得到全部购物项(包含选中和不选中的 )
+            List<ShoppingItems> cartItems = getCartItems(REDIS_CART_KEY_PREFIX + infoTo.getUserId());
+            //剔除未选中的购物项
+            if (!CollectionUtils.isEmpty(cartItems)) {
+                //获取所有全部选中的购物项
+                List<ShoppingItems> collect = cartItems.stream()
+                        .filter(item -> item.getCheck())
+                        .map(item -> {
+                            R bySkuId = skuInfoFeignService.getPriceBySkuId(item.getSkuId());
+                            log.info("购物车远程调用商品服务获取到当前skuid ={}的最新价格为{}", item.getSkuId(), bySkuId.get("data"));
+                            //设置最新的价格
+                            item.setPrice(new BigDecimal(bySkuId.get("data").toString()));
+                            return item;
+                        })
+                        .collect(Collectors.toList());
+                return collect;
+            }
+
+        }
+        return null;
     }
 }

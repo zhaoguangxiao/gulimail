@@ -1,7 +1,10 @@
 package com.atguigu.gulimail.member.service.impl;
 
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -26,4 +29,9 @@ public class UserAddressServiceImpl extends ServiceImpl<UserAddressDao, UserAddr
         return new PageUtils(page);
     }
 
+
+    @Override
+    public List<UserAddressEntity> listUserAddressByUserId(Long userId) {
+        return this.list(new QueryWrapper<UserAddressEntity>().eq("user_id", userId));
+    }
 }

@@ -1,18 +1,20 @@
 package com.atguigu.gulimail.cart.controller;
 
-import com.atguigu.gulimail.cart.interceptor.ShoppingCartInterceptor;
+import com.atguigu.common.utils.R;
 import com.atguigu.gulimail.cart.service.ShoppingCartService;
 import com.atguigu.gulimail.cart.vo.ShoppingCartVo;
 import com.atguigu.gulimail.cart.vo.ShoppingItems;
-import com.atguigu.gulimail.cart.vo.UserInfoTo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -116,5 +118,13 @@ public class ShoppingCartController {
     public String deleteCartItem(@RequestParam("skuId") Long skuId) {
         shoppingCartService.deleteCartItemBySkuId(skuId);
         return "redirect:http://cart.gulimail.com/cart.html";
+    }
+
+
+    @ResponseBody
+    @GetMapping("/currentUserCartItems")
+    public R currentUserCartItems() {
+        List<ShoppingItems> shoppingItems = shoppingCartService.getUserCartItems();
+        return R.ok().put("data", shoppingItems);
     }
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.gulimail.member.entity.UserAddressEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +17,13 @@ import java.util.Map;
 public interface UserAddressService extends IService<UserAddressEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     * 根据用户id 查询出全部收货地址
+     *
+     * @param userId
+     * @return
+     */
+    List<UserAddressEntity> listUserAddressByUserId(Long userId);
 }
 
