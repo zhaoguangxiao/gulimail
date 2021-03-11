@@ -1,5 +1,6 @@
 package com.atguigu.gulimail.cart.interceptor;
 
+import cn.hutool.core.util.IdUtil;
 import com.atguigu.common.vo.LoginUserVo;
 import com.atguigu.gulimail.cart.vo.UserInfoTo;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +13,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.UUID;
 
 import static com.atguigu.common.constant.LoginUserConstant.LOGIN_USER_KEY;
 import static com.atguigu.common.constant.ShoppingCartConstant.*;
@@ -64,7 +64,7 @@ public class ShoppingCartInterceptor implements HandlerInterceptor {
         }
         //创建临时用户的user-key
         if (StringUtils.isEmpty(infoTo.getUserKey())) {
-            String uuid = UUID.randomUUID().toString();
+            String uuid = IdUtil.simpleUUID();
             infoTo.setUserKey(uuid);
         }
         //在目标方法执行之前

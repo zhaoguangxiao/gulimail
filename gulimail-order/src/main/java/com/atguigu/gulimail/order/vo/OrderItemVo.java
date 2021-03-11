@@ -21,5 +21,6 @@ public class OrderItemVo {
     private Integer count; //几件
     private BigDecimal totalPrice; //商品小计
     private List<String> skuAttr; //属性集合
+    private BigDecimal weight; //商品重量
 
 }

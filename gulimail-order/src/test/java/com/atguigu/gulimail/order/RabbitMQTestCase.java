@@ -1,5 +1,6 @@
 package com.atguigu.gulimail.order;
 
+import cn.hutool.core.util.IdUtil;
 import com.atguigu.gulimail.order.entity.RefundInfoEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -83,7 +84,7 @@ public class RabbitMQTestCase {
         //如果发送的消息是一个对象,我们会使用对象的序列化机制,将对象写出去,对象必须实现 Serializable 接口
         //2发送对象要使用 json格式
         // CorrelationData 设置消息的唯一id
-        rabbitTemplate.convertAndSend("java-hello-exchanges", "hell-java1", entity, new CorrelationData(UUID.randomUUID().toString()));
+        rabbitTemplate.convertAndSend("java-hello-exchanges", "hell-java1", entity, new CorrelationData(IdUtil.simpleUUID()));
         log.info("消息发送完成 {}", entity);
 
     }

@@ -8,6 +8,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class OrderConfirmVo {
@@ -35,6 +36,8 @@ public class OrderConfirmVo {
     @Getter(AccessLevel.NONE) //不生成get 方法
     private BigDecimal payPrice;  //应付总额
 
+    private Map<Long, Boolean> stocks; //是否有仓库
+
 
     private String orderToken; //防止重复提交的令牌
 
@@ -52,5 +55,15 @@ public class OrderConfirmVo {
 
     public BigDecimal getPayPrice() {
         return getTotalPrice();
+    }
+
+    public Integer getCountShoppingCart() {
+        int count = 0;
+        if (!CollectionUtils.isEmpty(orderItemVos)) {
+            for (OrderItemVo orderItemVo : orderItemVos) {
+                count += orderItemVo.getCount();
+            }
+        }
+        return count;
     }
 }

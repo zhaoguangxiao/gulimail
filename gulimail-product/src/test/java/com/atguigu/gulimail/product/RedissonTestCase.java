@@ -1,5 +1,6 @@
 package com.atguigu.gulimail.product;
 
+import cn.hutool.core.util.IdUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
@@ -82,7 +83,7 @@ public class RedissonTestCase {
             //业务代码
             TimeUnit.SECONDS.sleep(30);//睡眠30秒
             //redis 写入数据
-            String uuid = UUID.randomUUID().toString();
+            String uuid = IdUtil.simpleUUID();
             log.info("redis 写入的uuid 为 {}", uuid);
             stringRedisTemplate.opsForValue().set("uuid", uuid);
         } catch (InterruptedException e) {

@@ -1,17 +1,22 @@
 package com.atguigu.gulimail.order.service.impl;
 
+import cn.hutool.core.util.IdUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.alibaba.nacos.api.config.filter.IFilterConfig;
+import com.atguigu.common.to.ware.ResponseSkuHasStockVo;
 import com.atguigu.common.utils.R;
 import com.atguigu.common.vo.LoginUserVo;
 import com.atguigu.gulimail.order.feign.ShoppingCartFeignService;
 import com.atguigu.gulimail.order.feign.UserAddressFeignService;
+import com.atguigu.gulimail.order.feign.WareFeignService;
 import com.atguigu.gulimail.order.interceptor.LoginUserInterceptor;
 import com.atguigu.gulimail.order.vo.OrderConfirmVo;
 import com.atguigu.gulimail.order.vo.OrderItemVo;
 import com.atguigu.gulimail.order.vo.UserAddressVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +24,8 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -29,14 +36,23 @@ import com.atguigu.common.utils.Query;
 import com.atguigu.gulimail.order.dao.OrderDao;
 import com.atguigu.gulimail.order.entity.OrderEntity;
 import com.atguigu.gulimail.order.service.OrderService;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
+import static com.atguigu.common.constant.OrderCartConstant.USER_REDIS_ORDER_TOKEN_PREFIX;
 
 
 @Slf4j
 @Service("orderService")
 public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> implements OrderService {
 
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private WareFeignService wareFeignService;
 
     @Autowired
     private ThreadPoolExecutor threadPoolExecutor;
@@ -88,12 +104,29 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             });
             //设置选中的购物项
             vo.setOrderItemVos(orderItemVos);
+        }, threadPoolExecutor).thenRunAsync(() -> {
+            //异步查询库存
+            List<Long> skuIds = vo.getOrderItemVos().stream().map(item -> item.getSkuId()).collect(Collectors.toList());
+            R hasStock = wareFeignService.getSkuHasStock(skuIds);
+            log.info("远程查询 是否存在库存 {}", hasStock.get("code"));
+            List<ResponseSkuHasStockVo> responseSkuHasStockVos = hasStock.getData(new TypeReference<List<ResponseSkuHasStockVo>>() {
+            });
+            if (!CollectionUtils.isEmpty(responseSkuHasStockVos)) {
+                Map<Long, Boolean> map = responseSkuHasStockVos.stream().collect(Collectors.toMap(ResponseSkuHasStockVo::getSkuId, ResponseSkuHasStockVo::getHasStock));
+                vo.setStocks(map);
+            }
         }, threadPoolExecutor);
+
 
         //设置用户积分信息
         vo.setIntegration(vo1.getIntegration());
         //其它数据自动计算
-        //todo 设置防重令牌
+        //设置防重令牌
+        String uuId = IdUtil.simpleUUID();
+        //页面保存令牌
+        vo.setOrderToken(uuId);
+        //服务端保存令牌 --设置令牌30分钟后过期
+        stringRedisTemplate.opsForValue().set(USER_REDIS_ORDER_TOKEN_PREFIX + vo1.getId(), uuId, 30, TimeUnit.MINUTES);
 
         //阻塞等待全部异步任务完成然后进行下一次
         CompletableFuture.allOf(userAddress, cartItem).get();

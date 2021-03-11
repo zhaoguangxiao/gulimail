@@ -19,13 +19,15 @@ public class MyGulimailFeignConfig {
             public void apply(RequestTemplate requestTemplate) {
                 //当前上下文请求属性
                 ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-                //获取当前请求
-                HttpServletRequest request = attributes.getRequest();
-                if (null != request) {
-                    //同步请求头属性 --header
-                    String header = request.getHeader("Cookie");
-                    //给新请求同步老请求的cookie
-                    requestTemplate.header("Cookie", header);
+                if (null != attributes) {
+                    //获取当前请求
+                    HttpServletRequest request = attributes.getRequest();
+                    if (null != request) {
+                        //同步请求头属性 --header
+                        String header = request.getHeader("Cookie");
+                        //给新请求同步老请求的cookie
+                        requestTemplate.header("Cookie", header);
+                    }
                 }
             }
         };

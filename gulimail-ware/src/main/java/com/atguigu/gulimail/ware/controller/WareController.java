@@ -1,20 +1,17 @@
 package com.atguigu.gulimail.ware.controller;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.atguigu.gulimail.ware.vo.ResponseAddressAndFareVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.atguigu.gulimail.ware.entity.WareEntity;
 import com.atguigu.gulimail.ware.service.WareService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.R;
-
 
 
 /**
@@ -35,7 +32,7 @@ public class WareController {
      */
     @RequestMapping("/list")
     //@RequiresPermissions("ware:ware:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = wareService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -47,8 +44,8 @@ public class WareController {
      */
     @RequestMapping("/info/{id}")
     //@RequiresPermissions("ware:ware:info")
-    public R info(@PathVariable("id") Long id){
-		WareEntity ware = wareService.getById(id);
+    public R info(@PathVariable("id") Long id) {
+        WareEntity ware = wareService.getById(id);
 
         return R.ok().put("ware", ware);
     }
@@ -58,8 +55,8 @@ public class WareController {
      */
     @RequestMapping("/save")
     //@RequiresPermissions("ware:ware:save")
-    public R save(@RequestBody WareEntity ware){
-		wareService.save(ware);
+    public R save(@RequestBody WareEntity ware) {
+        wareService.save(ware);
 
         return R.ok();
     }
@@ -69,8 +66,8 @@ public class WareController {
      */
     @RequestMapping("/update")
     //@RequiresPermissions("ware:ware:update")
-    public R update(@RequestBody WareEntity ware){
-		wareService.updateById(ware);
+    public R update(@RequestBody WareEntity ware) {
+        wareService.updateById(ware);
 
         return R.ok();
     }
@@ -80,10 +77,16 @@ public class WareController {
      */
     @RequestMapping("/delete")
     //@RequiresPermissions("ware:ware:delete")
-    public R delete(@RequestBody Long[] ids){
-		wareService.removeByIds(Arrays.asList(ids));
-
+    public R delete(@RequestBody Long[] ids) {
+        wareService.removeByIds(Arrays.asList(ids));
         return R.ok();
+    }
+
+
+    @GetMapping("/fare")
+    public R getFare(@RequestParam("addrId") Long addrId) {
+        ResponseAddressAndFareVo responseAddressAndFareVo = wareService.getFare(addrId);
+        return R.ok().setData(responseAddressAndFareVo);
     }
 
 }

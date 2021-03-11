@@ -1,6 +1,9 @@
 package com.atguigu.gulimail.auth.controller;
 
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.atguigu.common.utils.R;
@@ -70,12 +73,12 @@ public class LoginController {
                 return R.error(VAILD_SMS_CODE_Exception.getCode(), VAILD_SMS_CODE_Exception.getMessage());
             }
         }
-        String coode = UUID.randomUUID().toString().substring(0, 5);
-        String redisCodeKey = coode + "_" + System.currentTimeMillis();
+        String code = RandomUtil.randomNumbers(5);
+        String redisCodeKey = code + "_" + System.currentTimeMillis();
         //k: sms:code:17613720880
         //v: code
         stringRedisTemplate.opsForValue().set(SMS_CODE_REDIS_CACHE_PREFIX + phone, redisCodeKey, 10, TimeUnit.MINUTES);
-        smsSendFeignService.sendCode(phone, coode);
+        smsSendFeignService.sendCode(phone, code);
         return R.ok();
     }
 
