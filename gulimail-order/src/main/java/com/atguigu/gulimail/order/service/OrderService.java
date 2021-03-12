@@ -1,6 +1,8 @@
 package com.atguigu.gulimail.order.service;
 
 import com.atguigu.gulimail.order.vo.OrderConfirmVo;
+import com.atguigu.gulimail.order.vo.OrderSubmitVo;
+import com.atguigu.gulimail.order.vo.ResponseSubmitOrderVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.gulimail.order.entity.OrderEntity;
@@ -23,5 +25,7 @@ public interface OrderService extends IService<OrderEntity> {
      * @return 订单确认页面返回需要的数据
      */
     OrderConfirmVo confirmOrder() throws ExecutionException, InterruptedException;
+
+    ResponseSubmitOrderVo submitOrder(OrderSubmitVo orderSubmitVo);
 }
 

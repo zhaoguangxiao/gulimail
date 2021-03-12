@@ -1,11 +1,14 @@
 package com.atguigu.gulimail.ware.service;
 
 import com.atguigu.gulimail.ware.vo.ResponseAddressAndFareVo;
+import com.atguigu.gulimail.ware.vo.ResponseOrderStockLockVo;
+import com.atguigu.gulimail.ware.vo.WareSkuLockVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.gulimail.ware.entity.WareEntity;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,5 +29,7 @@ public interface WareService extends IService<WareEntity> {
      * @return
      */
     ResponseAddressAndFareVo getFare(Long addrId);
+
+
 }
 

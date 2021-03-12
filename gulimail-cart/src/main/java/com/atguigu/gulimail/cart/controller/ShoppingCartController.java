@@ -125,6 +125,6 @@ public class ShoppingCartController {
     @GetMapping("/currentUserCartItems")
     public R currentUserCartItems() {
         List<ShoppingItems> shoppingItems = shoppingCartService.getUserCartItems();
-        return R.ok().put("data", shoppingItems);
+        return R.ok().setData(shoppingItems);
     }
 }

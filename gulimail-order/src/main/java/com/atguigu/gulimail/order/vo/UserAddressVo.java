@@ -21,7 +21,7 @@ public class UserAddressVo {
      */
     private String phone;
     /**
-     * 右边
+     * 邮编
      */
     private String postCode;
     /**

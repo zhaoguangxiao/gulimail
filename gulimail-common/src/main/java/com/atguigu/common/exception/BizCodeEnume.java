@@ -12,6 +12,7 @@ package com.atguigu.common.exception;
  * 13:购物车
  * 14:物流
  * 15:用户模块
+ * 16:库存模块
  *
  * @author Administrator
  * @Date 2021年1月26日15:54:33
@@ -27,7 +28,8 @@ public enum BizCodeEnume {
     USER_REGISTER_CONTRARY_EXCEPTION(15000, "用户注册出现了意外之外的问题"),
     USER_EXIST_EXCEPTION(15002, "用户名称已经存在"),
     PHONE_EXIST_EXCEPTION(15003, "用户手机号已经存在"),
-    USER_LOGIN_EXIST_EXCEPTION(15004, "账号密码错误");
+    USER_LOGIN_EXIST_EXCEPTION(15004, "账号密码错误"),
+    NOT_STOCK_LOCK_EXCEPTION(16000, "商品库存不足");
 
     private int code;
     private String message;

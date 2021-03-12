@@ -2,27 +2,25 @@ package com.atguigu.gulimail.ware.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.atguigu.common.utils.PageUtils;
+import com.atguigu.common.utils.Query;
 import com.atguigu.common.utils.R;
+import com.atguigu.gulimail.ware.dao.WareDao;
+import com.atguigu.gulimail.ware.entity.WareEntity;
 import com.atguigu.gulimail.ware.feign.MemberFeignService;
+import com.atguigu.gulimail.ware.service.WareService;
 import com.atguigu.gulimail.ware.vo.ResponseAddressAndFareVo;
 import com.atguigu.gulimail.ware.vo.UserAddressVo;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.Map;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.atguigu.common.utils.PageUtils;
-import com.atguigu.common.utils.Query;
-
-import com.atguigu.gulimail.ware.dao.WareDao;
-import com.atguigu.gulimail.ware.entity.WareEntity;
-import com.atguigu.gulimail.ware.service.WareService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import java.math.BigDecimal;
+import java.util.Map;
 
 
 @Slf4j
@@ -57,7 +55,6 @@ public class WareServiceImpl extends ServiceImpl<WareDao, WareEntity> implements
     public ResponseAddressAndFareVo getFare(Long addrId) {
         R info = memberFeignService.getAddrInfo(addrId);
         log.info("调用远程的会员服务查新到当前的地址为 {}", info.get("userAddress"));
-        ;
         UserAddressVo userAddress = JSON.parseObject(JSON.toJSONString(info.get("userAddress")), new TypeReference<UserAddressVo>() {
         });
 
@@ -68,4 +65,5 @@ public class WareServiceImpl extends ServiceImpl<WareDao, WareEntity> implements
         }
         return null;
     }
+
 }

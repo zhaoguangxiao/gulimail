@@ -345,7 +345,7 @@
     <!--右侧绿色-->
     <img src="static/order/confirm/img/08.png" class="img2"/>
 </div>
-<p class="p1">填写并核对订单信息</p>
+<p class="p1">填写并核对订单信息</p><p class="p1" style="color: red" th:text="${#strings.isEmpty(session.msg)?'':session.msg}"></p>
 <div class="section">
     <!--收货人信息-->
     <div class="top-2">
@@ -425,9 +425,8 @@
             <img th:src="${item.defaultImage}" style="width: 50px;height:53px" class="yun"/>
             <div class="mi">
                 <p th:text="${item.title}">小米（MI）小米手环2 智能运动 心率检测 来 <span style="color: red;"> ￥ [[${#numbers.formatDecimal(item.price,1,2)}]]</span>
-                    <span th:text="${item.count}"> x1 </span> <span
-                            th:text="${orderConfirmVo.stocks.get(item.skuId)?'有货':'无货'}">有货</span></p>
-                <p><span>0.095kg</span></p>
+                    <span th:text="${item.count}"></span></p>
+                <p><span th:text="${orderConfirmVo.stocks.get(item.skuId)?'有货':'无货'}"></span></p>
                 <p class="tui-1"><img src="static/order/confirm/img/i_07.png"/>支持7天无理由退货</p>
             </div>
         </div>

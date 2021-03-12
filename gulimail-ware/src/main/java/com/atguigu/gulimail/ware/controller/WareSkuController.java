@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.atguigu.common.to.ware.ResponseSkuHasStockVo;
+import com.atguigu.gulimail.ware.exception.NoStockException;
+import com.atguigu.gulimail.ware.vo.ResponseOrderStockLockVo;
+import com.atguigu.gulimail.ware.vo.WareSkuLockVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +15,8 @@ import com.atguigu.gulimail.ware.entity.WareSkuEntity;
 import com.atguigu.gulimail.ware.service.WareSkuService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.R;
+
+import static com.atguigu.common.exception.BizCodeEnume.NOT_STOCK_LOCK_EXCEPTION;
 
 
 /**
@@ -93,6 +98,18 @@ public class WareSkuController {
     public R getSkuHasStock(@RequestBody List<Long> skuIds) {
         List<ResponseSkuHasStockVo> skuHasStock = wareSkuService.getSkuHasStock(skuIds);
         return R.ok().setData(skuHasStock);
+    }
+
+
+    @PostMapping("/lock/order")
+    public R orderStockLocks(@RequestBody WareSkuLockVo wareSkuLockVo) {
+        try {
+            Boolean flag = wareSkuService.orderStockLocks(wareSkuLockVo);
+            if (flag) return R.ok();
+            else return R.error();
+        } catch (NoStockException e) {
+            return R.error(NOT_STOCK_LOCK_EXCEPTION.getCode(),NOT_STOCK_LOCK_EXCEPTION.getMessage());
+        }
     }
 
 }

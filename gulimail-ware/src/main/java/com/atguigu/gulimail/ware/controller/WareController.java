@@ -1,17 +1,15 @@
 package com.atguigu.gulimail.ware.controller;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Map;
-
+import com.atguigu.common.utils.PageUtils;
+import com.atguigu.common.utils.R;
+import com.atguigu.gulimail.ware.entity.WareEntity;
+import com.atguigu.gulimail.ware.service.WareService;
 import com.atguigu.gulimail.ware.vo.ResponseAddressAndFareVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.atguigu.gulimail.ware.entity.WareEntity;
-import com.atguigu.gulimail.ware.service.WareService;
-import com.atguigu.common.utils.PageUtils;
-import com.atguigu.common.utils.R;
+import java.util.Arrays;
+import java.util.Map;
 
 
 /**
@@ -83,6 +81,12 @@ public class WareController {
     }
 
 
+    /**
+     * 根据地址ID 获取邮费和当前用户地址信息
+     *
+     * @param addrId
+     * @return
+     */
     @GetMapping("/fare")
     public R getFare(@RequestParam("addrId") Long addrId) {
         ResponseAddressAndFareVo responseAddressAndFareVo = wareService.getFare(addrId);
