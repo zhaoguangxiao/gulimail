@@ -26,6 +26,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -153,10 +154,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
     /**
      * 验令牌[原子操作],去创建订单  , 验价格 , 锁库存 ...
+     * Transactional 本地事务,在分布式系统下只能控制自己回滚,控制不了其它服务的回滚,
+     * 分布式事务-能产生分布式事务的最大原因是 网络原因
      *
      * @param orderSubmitVo
      * @return
      */
+    @GlobalTransactional
     @Transactional
     @Override
     public ResponseSubmitOrderVo submitOrder(OrderSubmitVo orderSubmitVo) {
@@ -193,21 +197,23 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 }).collect(Collectors.toList());
                 lockVo.setOrderItemVoList(itemVos);
                 R stockLocks = wareFeignService.orderStockLocks(lockVo);
+                int i = 10 / 0;
                 log.info("确定订单远程锁库存服务 {}", Integer.parseInt(stockLocks.get("code").toString()));
                 if (Integer.parseInt(stockLocks.get("code").toString()) == 0) {
                     //锁定成功
+                    //远程扣减 积分
                     return orderVo;
                 } else {
                     //锁定失败了 库存锁定失败
                     orderVo.setCode(3);
-                    String msg= (String) stockLocks.get("msg");
+                    String msg = (String) stockLocks.get("msg");
                     throw new NoStockException(msg);
                 }
-            }else {
+            } else {
                 //金额对比失败
                 orderVo.setCode(2);
             }
-        }else {
+        } else {
             //令牌验证失败
             orderVo.setCode(1);
         }

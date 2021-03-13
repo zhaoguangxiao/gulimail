@@ -9,6 +9,11 @@ spring:
     nacos:
       discovery:
         server-addr: 47.103.16.140:8848
+      config:
+        server-addr: 47.103.16.140:8848
+    alibaba:
+      seata:
+        tx-service-group: ${spring.application.name}-fescar-service-group
   rabbitmq:
     listener:
       simple:
@@ -52,3 +57,6 @@ gulimail:
     core-pool-size: 20
     maximum-pool-size: 200
     keep-alive-time: 10
+
+
+

@@ -43,6 +43,7 @@
         <aliyun.version>1.0.0</aliyun.version>
         <elasticsearch.client.version>7.10.1</elasticsearch.client.version>
         <elasticsearch.version>7.10.1</elasticsearch.version>
+        <seata-version>1.4.1</seata-version>
     </properties>
 
 

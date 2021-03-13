@@ -50,6 +50,28 @@
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
+
+        <!--     seata事务控制   -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
+            <!--       移除默认的io.seata 0.7版本的引入高版本的     -->
+            <exclusions>
+                <exclusion>
+                    <artifactId>seata-all</artifactId>
+                    <groupId>io.seata</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+
+        <!--seata-all-->
+        <dependency>
+            <groupId>io.seata</groupId>
+            <artifactId>seata-all</artifactId>
+            <version>${seata-version}</version>
+        </dependency>
+
     </dependencies>
 
 </project>
