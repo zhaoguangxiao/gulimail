@@ -16,6 +16,14 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * 4页面放在了templates 文件夹下可以直接被访问
  * 5springboot访问项目时,默认找index.html页面
  * 6不重启服务器实时更新thymeleaf 页面
+ *
+ * 使用 seata事务管理流程
+ *  1), 本地下载 seata-server zip解压,把修改 config.txt 与 nacos-conf.sh 配置文件参考 https://www.processon.com/mindmap/60078e7b1e08534bec2a5092
+ *  2), 导入pom文件 主要有2个 1个是 spring-cloud-starter-alibaba-seata 与 seata-all
+ *  3), 新建配置文件,seata代理对象管理本地数据库
+ *  4), nacos 新建本地微服务的配置文件 {spring.application.name}-txt-group  (注意: 类型为 SEATA_GROUP 内容为txt 的 default)
+ *  5), 在 templates 文件下面添加 file.conf 与 registry,conf 文件 并在 application.yml 添加 tx-service-group: ${spring.application.name}-fescar-service-group
+ *
  */
 @EnableFeignClients(basePackages = "com.atguigu.gulimail.product.feign")
 @EnableDiscoveryClient

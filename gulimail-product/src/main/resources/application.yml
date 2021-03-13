@@ -17,6 +17,9 @@ spring:
     nacos:
       discovery:
         server-addr: 47.103.16.140:8848   #服务注册进服务中心
+    alibaba:
+      seata:
+        tx-service-group: ${spring.application.name}-fescar-service-group
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://47.103.16.140:3306/guli_pms?useUnicode=true&characterEncoding=UTF-8&useSSL=false

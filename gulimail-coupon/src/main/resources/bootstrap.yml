@@ -49,3 +49,6 @@ spring:
         namespace: 7b9193a2-c33d-4c31-8b5d-d6d19b7f0da6  #指定从那个命名空间下读取配置文件
         file-extension: yaml
         server-addr: 47.103.16.140:8848  #注册配置中心位置
+    alibaba:
+      seata:
+        tx-service-group: ${spring.application.name}-fescar-service-group

@@ -157,6 +157,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
      * Transactional 本地事务,在分布式系统下只能控制自己回滚,控制不了其它服务的回滚,
      * 分布式事务-能产生分布式事务的最大原因是 网络原因
      *
+     *
+     * GlobalTransactional 是通过串行化 不能承受高并发,默认是AT模式 ,所以下订单并不合适
+     * 为了保证高并发,库存服务自己回滚,可以发消息给库存服务,库存服务本身可以使用自动解锁模式,参与消息队列
      * @param orderSubmitVo
      * @return
      */
