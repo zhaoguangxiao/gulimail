@@ -11,6 +11,15 @@ spring:
     alibaba:
       seata:
         tx-service-group: ${spring.application.name}-fescar-service-group
+  rabbitmq:
+    listener:
+      simple:
+        acknowledge-mode: manual #手动消息接收
+    host: 192.168.247.111
+    username: guest
+    password: guest
+    port: 5672
+    virtual-host: /  #虚拟主机
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://47.103.16.140:3306/guli_wms?useUnicode=true&characterEncoding=UTF-8&useSSL=false

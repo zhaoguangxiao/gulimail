@@ -72,6 +72,13 @@
             <version>${seata-version}</version>
         </dependency>
 
+
+        <!--     使用rabbitmq 作为消息队列   -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

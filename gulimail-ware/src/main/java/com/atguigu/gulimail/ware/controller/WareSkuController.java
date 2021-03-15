@@ -101,6 +101,15 @@ public class WareSkuController {
     }
 
 
+    /**
+     * 为某个订单锁库存
+     * 库存解锁的场景
+     *  1), 下订单成功,订单过期没有支付被系统自动取消,被用户手动取消订单
+     *  2), 下订单成功,库存锁定成功,接下来的业务调用失败,导致丁订单回滚,之前锁定的库存就要解锁
+     *
+     * @param wareSkuLockVo
+     * @return
+     */
     @PostMapping("/lock/order")
     public R orderStockLocks(@RequestBody WareSkuLockVo wareSkuLockVo) {
         try {
@@ -108,7 +117,7 @@ public class WareSkuController {
             if (flag) return R.ok();
             else return R.error();
         } catch (NoStockException e) {
-            return R.error(NOT_STOCK_LOCK_EXCEPTION.getCode(),NOT_STOCK_LOCK_EXCEPTION.getMessage());
+            return R.error(NOT_STOCK_LOCK_EXCEPTION.getCode(), NOT_STOCK_LOCK_EXCEPTION.getMessage());
         }
     }
 

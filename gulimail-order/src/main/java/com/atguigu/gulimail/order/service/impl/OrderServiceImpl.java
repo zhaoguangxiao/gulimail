@@ -26,7 +26,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -156,14 +155,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
      * 验令牌[原子操作],去创建订单  , 验价格 , 锁库存 ...
      * Transactional 本地事务,在分布式系统下只能控制自己回滚,控制不了其它服务的回滚,
      * 分布式事务-能产生分布式事务的最大原因是 网络原因
-     *
-     *
+     * <p>
+     * <p>
      * GlobalTransactional 是通过串行化 不能承受高并发,默认是AT模式 ,所以下订单并不合适
      * 为了保证高并发,库存服务自己回滚,可以发消息给库存服务,库存服务本身可以使用自动解锁模式,参与消息队列
+     *
      * @param orderSubmitVo
      * @return
      */
-    @GlobalTransactional
+    //@GlobalTransactional
     @Transactional
     @Override
     public ResponseSubmitOrderVo submitOrder(OrderSubmitVo orderSubmitVo) {
@@ -200,8 +200,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 }).collect(Collectors.toList());
                 lockVo.setOrderItemVoList(itemVos);
                 R stockLocks = wareFeignService.orderStockLocks(lockVo);
-                int i = 10 / 0;
                 log.info("确定订单远程锁库存服务 {}", Integer.parseInt(stockLocks.get("code").toString()));
+                int i = 10 / 0;
                 if (Integer.parseInt(stockLocks.get("code").toString()) == 0) {
                     //锁定成功
                     //远程扣减 积分
@@ -395,5 +395,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         BigDecimal subtract = totalPrice.subtract(entity.getPromotionAmount()).subtract(entity.getCouponAmount()).subtract(entity.getIntegrationAmount());
         entity.setRealAmount(subtract);
         return entity;
+    }
+
+    @Override
+    public Integer getOrderStatus(String orderSn) {
+        OrderEntity order_sn = this.getOne(new QueryWrapper<OrderEntity>().eq("order_sn", orderSn));
+        return order_sn != null ? order_sn.getStatus() : null;
     }
 }

@@ -1,5 +1,6 @@
 package com.atguigu.gulimail.ware.service;
 
+import com.atguigu.common.to.mq.StockLockSuccessTo;
 import com.atguigu.common.to.ware.ResponseSkuHasStockVo;
 import com.atguigu.gulimail.ware.vo.WareSkuLockVo;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -24,10 +25,14 @@ public interface WareSkuService extends IService<WareSkuEntity> {
 
     List<ResponseSkuHasStockVo> getSkuHasStock(List<Long> skuIds);
 
-    /** 为某个订单锁定库存
+    /**
+     * 为某个订单锁定库存
+     *
      * @param wareSkuLockVo
      * @return
      */
     Boolean orderStockLocks(WareSkuLockVo wareSkuLockVo);
+
+    public void unlockStock(StockLockSuccessTo stockLockSuccessTo);
 }
 

@@ -2,6 +2,7 @@ package com.atguigu.gulimail.order.interceptor;
 
 import com.atguigu.common.vo.LoginUserVo;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,11 @@ public class LoginUserInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        //放行某些请求 不需要登录就能访问 如 order/order/status/{orderSn}
+        String uri = request.getRequestURI();
+        boolean match = new AntPathMatcher().match("/order/order/status/**", uri);
+        if (match) return true;
+
         Object attribute = request.getSession().getAttribute(LOGIN_USER_KEY);
         if (null != attribute) {
             //将当前用户 放入全部访问
