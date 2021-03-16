@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.gulimail.ware.entity.WareOrderBillDetailEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +17,9 @@ import java.util.Map;
 public interface WareOrderBillDetailService extends IService<WareOrderBillDetailEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+
+    List<WareOrderBillDetailEntity> listByTaskIdAndStatus(Long taskId, Integer lockStock);
+
 }
 

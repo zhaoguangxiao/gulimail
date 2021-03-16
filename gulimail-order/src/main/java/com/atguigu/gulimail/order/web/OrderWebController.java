@@ -1,5 +1,6 @@
 package com.atguigu.gulimail.order.web;
 
+import com.atguigu.common.utils.PageUtils;
 import com.atguigu.gulimail.order.service.OrderService;
 import com.atguigu.gulimail.order.vo.OrderConfirmVo;
 import com.atguigu.gulimail.order.vo.OrderSubmitVo;
@@ -9,8 +10,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @Controller
@@ -76,5 +80,25 @@ public class OrderWebController {
         //失败重新确认订单信息
         return "redirect:http://order.gulimail.com/toTrade";
     }
+
+
+    /**
+     * 支付成功,返回用户订单列表页面
+     *
+     * @return
+     */
+    @GetMapping("/list.html")
+    public String listPage(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                           Model model) {
+        //获取到支付宝给我们传来的所有数据 验证签名
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("page", pageNum.toString());
+        PageUtils pageUtils = orderService.queryPageWithItem(map);
+        model.addAttribute("orders", pageUtils);
+        return "list";
+    }
+
+
 
 }

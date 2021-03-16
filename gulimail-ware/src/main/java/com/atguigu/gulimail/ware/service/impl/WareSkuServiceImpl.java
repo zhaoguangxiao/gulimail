@@ -1,6 +1,7 @@
 package com.atguigu.gulimail.ware.service.impl;
 
 import com.alibaba.fastjson.TypeReference;
+import com.atguigu.common.to.mq.OrderEntityTo;
 import com.atguigu.common.to.mq.StockDetailTo;
 import com.atguigu.common.to.mq.StockLockSuccessTo;
 import com.atguigu.common.to.ware.ResponseSkuHasStockVo;
@@ -176,6 +177,8 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
                             detailEntity.setWareId(wareIds);
                             detailEntity.setSkuNum(skuWareHasStockVo.getCount());
                             detailEntity.setLockStatus(LOCK_STOCK);
+                            //保存商品订购单id
+                            detailEntity.setTaskId(entity.getId());
                             wareOrderBillDetailService.save(detailEntity);
                             //告诉 rabbitmq 锁定一些库存
                             StockLockSuccessTo lockSuccessTo = new StockLockSuccessTo();
@@ -231,12 +234,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
                         //订单已经被取消了 解锁库存
                         StockDetailTo stockDetailTo = stockLockSuccessTo.getStockDetailTo();
                         //库存解锁
-                        this.baseMapper.unlockStock(stockDetailTo.getSkuId(), stockDetailTo.getWareId(), stockDetailTo.getSkuNum());
-                        //更新库存工作单与工作单详情 的状态
-                        WareOrderBillDetailEntity entity = new WareOrderBillDetailEntity();
-                        entity.setId(detailServiceById.getId());
-                        entity.setLockStatus(UNLOCKING_STOCK);
-                        wareOrderBillDetailService.updateById(entity);
+                        stockUnlocking(stockDetailTo.getSkuId(), stockDetailTo.getWareId(), stockDetailTo.getSkuNum(),detailServiceById.getId());
                     }
                 }
             } else {
@@ -245,6 +243,40 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
 
         } else {
             //无需解锁库存 ,库存回滚了
+        }
+    }
+
+    private void stockUnlocking(Long skuId, Long wareId, Integer num,Long detailId) {
+        this.baseMapper.unlockStock(skuId, wareId, num);
+        //更新库存工作单与工作单详情 的状态
+        WareOrderBillDetailEntity entity = new WareOrderBillDetailEntity();
+        entity.setId(detailId);
+        entity.setLockStatus(UNLOCKING_STOCK);
+        wareOrderBillDetailService.updateById(entity);
+    }
+
+
+
+
+    /**
+     * 防止订单服务卡顿,导致订单一直改不了状态,库存一直改不了,然后库存消息优先到期,然后查订单状态一直是新建状态,什么都不做就都走了
+     * 导致卡顿的订单,永远不能解锁自己的库存
+     *
+     * @param orderEntityTo
+     */
+    @Transactional
+    @Override
+    public void unlockStock(OrderEntityTo orderEntityTo) {
+        //1 查询订单最新状态
+        WareOrderBillEntity wareOrderBillEntity = wareOrderBillService.getEntityByOrderSn(orderEntityTo.getOrderSn());
+        if (null != wareOrderBillEntity) {
+            //按照库存工作单,找出全部锁定状态的
+            List<WareOrderBillDetailEntity> wareOrderBillDetailEntityList = wareOrderBillDetailService.listByTaskIdAndStatus(wareOrderBillEntity.getId(), LOCK_STOCK);
+            if (!CollectionUtils.isEmpty(wareOrderBillDetailEntityList)) {
+                for (WareOrderBillDetailEntity entity : wareOrderBillDetailEntityList) {
+                    stockUnlocking(entity.getSkuId(),entity.getWareId(),entity.getSkuNum(),entity.getId());
+                }
+            }
         }
     }
 }

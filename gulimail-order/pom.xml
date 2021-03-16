@@ -113,6 +113,13 @@
             <version>${seata-version}</version>
         </dependency>
 
+        <!--   阿里支付模块     -->
+        <!-- https://mvnrepository.com/artifact/com.alipay.sdk/alipay-sdk-java -->
+        <dependency>
+            <groupId>com.alipay.sdk</groupId>
+            <artifactId>alipay-sdk-java</artifactId>
+            <version>${alipay.sdk.java.version}</version>
+        </dependency>
 
 
     </dependencies>

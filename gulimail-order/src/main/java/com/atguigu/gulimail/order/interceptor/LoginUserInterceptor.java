@@ -19,8 +19,10 @@ public class LoginUserInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //放行某些请求 不需要登录就能访问 如 order/order/status/{orderSn}
         String uri = request.getRequestURI();
+
         boolean match = new AntPathMatcher().match("/order/order/status/**", uri);
-        if (match) return true;
+        boolean alipayed = new AntPathMatcher().match("/payed/**", uri);
+        if (match || alipayed) return true;
 
         Object attribute = request.getSession().getAttribute(LOGIN_USER_KEY);
         if (null != attribute) {

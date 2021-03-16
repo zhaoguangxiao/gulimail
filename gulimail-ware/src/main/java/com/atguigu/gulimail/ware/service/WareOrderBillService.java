@@ -16,5 +16,7 @@ import java.util.Map;
 public interface WareOrderBillService extends IService<WareOrderBillEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    WareOrderBillEntity getEntityByOrderSn(String orderSn);
 }
 

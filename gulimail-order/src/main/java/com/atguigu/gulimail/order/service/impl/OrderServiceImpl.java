@@ -3,6 +3,7 @@ package com.atguigu.gulimail.order.service.impl;
 import cn.hutool.core.util.IdUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.atguigu.common.to.mq.OrderEntityTo;
 import com.atguigu.common.to.ware.ResponseSkuHasStockVo;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.Query;
@@ -11,6 +12,7 @@ import com.atguigu.common.vo.LoginUserVo;
 import com.atguigu.gulimail.order.dao.OrderDao;
 import com.atguigu.gulimail.order.entity.OrderEntity;
 import com.atguigu.gulimail.order.entity.OrderItemEntity;
+import com.atguigu.gulimail.order.entity.PaymentInfoEntity;
 import com.atguigu.gulimail.order.enume.OrderStatusEnum;
 import com.atguigu.gulimail.order.exception.NoStockException;
 import com.atguigu.gulimail.order.feign.ProductFeignService;
@@ -20,6 +22,7 @@ import com.atguigu.gulimail.order.feign.WareFeignService;
 import com.atguigu.gulimail.order.interceptor.LoginUserInterceptor;
 import com.atguigu.gulimail.order.service.OrderItemService;
 import com.atguigu.gulimail.order.service.OrderService;
+import com.atguigu.gulimail.order.service.PaymentInfoService;
 import com.atguigu.gulimail.order.vo.*;
 import com.atguigu.gulimail.order.to.CreateOrderTo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -27,6 +30,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -50,6 +55,10 @@ import java.util.stream.Collectors;
 
 import static com.atguigu.common.constant.OrderCartConstant.USER_REDIS_ORDER_TOKEN_PREFIX;
 import static com.atguigu.gulimail.order.entity.OrderEntity.DELETE_STATUS_NDELETED;
+import static com.atguigu.gulimail.order.enume.OrderStatusEnum.CANCLED;
+import static com.atguigu.gulimail.order.enume.OrderStatusEnum.CREATE_NEW;
+import static com.atguigu.gulimail.order.vo.PayAsyncVo.END_OF_TRANSACTION;
+import static com.atguigu.gulimail.order.vo.PayAsyncVo.TRANSACTION_PAYMENT_SUCCESSFUL;
 
 
 @Slf4j
@@ -58,6 +67,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
     private ThreadLocal<OrderSubmitVo> orderSubmitVoThreadLocal = new ThreadLocal<>();
 
+
+    @Autowired
+    private PaymentInfoService paymentInfoService;
 
     @Autowired
     private OrderItemService orderItemService;
@@ -77,9 +89,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     @Autowired
     private UserAddressFeignService userAddressFeignService;
 
-
     @Autowired
     private ShoppingCartFeignService shoppingCartFeignService;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -159,6 +173,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
      * <p>
      * GlobalTransactional 是通过串行化 不能承受高并发,默认是AT模式 ,所以下订单并不合适
      * 为了保证高并发,库存服务自己回滚,可以发消息给库存服务,库存服务本身可以使用自动解锁模式,参与消息队列
+     * 监听器
      *
      * @param orderSubmitVo
      * @return
@@ -187,6 +202,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             if (Math.abs(payAmount.subtract(payPrice).doubleValue()) < 0.01) {
                 //保存订单
                 saveOrder(order);
+                //保存订单
+                orderVo.setOrderEntity(order.getOrderEntity());
                 //4 锁库存 --只要有异常 ,回滚订单数据
                 WareSkuLockVo lockVo = new WareSkuLockVo();
                 //设置订单id
@@ -201,10 +218,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 lockVo.setOrderItemVoList(itemVos);
                 R stockLocks = wareFeignService.orderStockLocks(lockVo);
                 log.info("确定订单远程锁库存服务 {}", Integer.parseInt(stockLocks.get("code").toString()));
-                int i = 10 / 0;
                 if (Integer.parseInt(stockLocks.get("code").toString()) == 0) {
                     //锁定成功
                     //远程扣减 积分
+                    //todo 保证消息一定会发送出去,每个消息都可以做好日志记录(给数据库保存每一个消息的详细信息)
+                    //todo 定期扫描数据库 将没发送数据库的数据重新发送一遍
+                    rabbitTemplate.convertAndSend("order-event-exchange", "order.create.order", order.getOrderEntity());
                     return orderVo;
                 } else {
                     //锁定失败了 库存锁定失败
@@ -322,7 +341,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         //设置订单号
         entity.setOrderSn(timeId);
         //设置订单状态
-        entity.setStatus(OrderStatusEnum.CREATE_NEW.getCode());
+        entity.setStatus(CREATE_NEW.getCode());
         //获取收货地址信息
         R r = wareFeignService.getFareAndAddress(vo.getAddressId());
         log.info("创建订单,远程查询地址信息为 {}", r.get("data"));
@@ -401,5 +420,90 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     public Integer getOrderStatus(String orderSn) {
         OrderEntity order_sn = this.getOne(new QueryWrapper<OrderEntity>().eq("order_sn", orderSn));
         return order_sn != null ? order_sn.getStatus() : null;
+    }
+
+
+    @Override
+    public void orderClose(OrderEntity orderEntity) {
+        //1 查询当前订单的最新状态
+        OrderEntity entity = this.getById(orderEntity.getId());
+        if (null != entity && entity.getStatus() == CREATE_NEW.getCode()) {
+            //2 关单
+            OrderEntity update = new OrderEntity();
+            update.setId(orderEntity.getId());
+            update.setStatus(CANCLED.getCode());
+            this.updateById(update);
+            //只要解锁成功 就发消息给库存服务释放库存
+            OrderEntityTo entityTo = new OrderEntityTo();
+            BeanUtils.copyProperties(orderEntity, entityTo);
+            rabbitTemplate.convertAndSend("order-event-exchange", "order.release.other", entityTo);
+        }
+    }
+
+
+    @Override
+    public PayVo getOrderPay(String orderSn) {
+        PayVo vo = new PayVo();
+        OrderEntity entity = getOrderEntityByOrderSn(orderSn);
+        String payTotal = entity.getPayAmount().setScale(2, BigDecimal.ROUND_UP).toString();
+        vo.setTotal_amount(payTotal);
+        vo.setOut_trade_no(orderSn);
+        List<OrderItemEntity> itemEntities = orderItemService.listEntityByOrderSn(orderSn);
+        String title = CollectionUtils.isEmpty(itemEntities) ? "谷粒商城收银" : itemEntities.get(0).getSkuName();
+        vo.setSubject(title);
+        String attrs = CollectionUtils.isEmpty(itemEntities) ? "谷粒商城属性" : itemEntities.get(0).getSkuAttrsVals();
+        vo.setBody(attrs);
+        return vo;
+    }
+
+
+    @Override
+    public OrderEntity getOrderEntityByOrderSn(String orderSn) {
+        return this.getOne(new QueryWrapper<OrderEntity>().eq("order_sn", orderSn));
+    }
+
+
+    @Override
+    public PageUtils queryPageWithItem(Map<String, Object> params) {
+        //获取当前登录用户信息
+        LoginUserVo userVo = LoginUserInterceptor.threadLocal.get();
+
+        QueryWrapper<OrderEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_id", userVo.getId());
+        wrapper.orderByDesc("create_time");
+        IPage<OrderEntity> page = this.page(
+                new Query<OrderEntity>().getPage(params),
+                wrapper
+        );
+        List<OrderEntity> collect = page.getRecords().stream().map(item -> {
+            List<OrderItemEntity> orderItemEntities = orderItemService.listEntityByOrderSn(item.getOrderSn());
+            item.setOrderItemEntityList(orderItemEntities);
+            return item;
+        }).collect(Collectors.toList());
+
+        page.setRecords(collect);
+
+        return new PageUtils(page);
+    }
+
+    @Override
+    public String handlerAlipayed(PayAsyncVo payAsyncVo) {
+        //拿到订单交易号
+        String orderSn = payAsyncVo.getOut_trade_no();
+        //1 保存交易流水 用于后期对账
+        paymentInfoService.save(payAsyncVo);
+        //2 修改订单的状态信息
+        String orderStatus = payAsyncVo.getTrade_status();
+        if (orderStatus.equals(TRANSACTION_PAYMENT_SUCCESSFUL) || orderStatus.equals(END_OF_TRANSACTION)) {
+            //支付成功状态
+            updateOrderStatus(orderSn, OrderStatusEnum.PAYED.getCode());
+        }
+        return "success";
+    }
+
+
+    @Override
+    public int updateOrderStatus(String orderSn, Integer status) {
+        return this.baseMapper.updateOrderByOrderSn(orderSn, status);
     }
 }

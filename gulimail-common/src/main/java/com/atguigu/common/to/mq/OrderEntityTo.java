@@ -1,35 +1,14 @@
-package com.atguigu.gulimail.order.entity;
+package com.atguigu.common.to.mq;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.math.BigDecimal;
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 import lombok.Data;
 
-/**
- * 订单
- *
- * @author guangxiaozhao
- * @email 1764773283@qq.com
- * @date 2021-01-21 09:41:32
- */
+import java.math.BigDecimal;
+import java.util.Date;
+
 @Data
-@TableName("oms_order")
-public class OrderEntity implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class OrderEntityTo {
 
-    public static final Integer DELETE_STATUS_NDELETED = 0;
-    public static final Integer DELETE_STATUS_DELETED = 1;
-
-    /**
-     * id
-     */
-    @TableId
     private Long id;
     /**
      * member_id
@@ -195,9 +174,4 @@ public class OrderEntity implements Serializable {
      * 订单备注
      */
     private String remark;
-
-
-    @TableField(exist = false)
-    private List<OrderItemEntity> orderItemEntityList;
-
 }

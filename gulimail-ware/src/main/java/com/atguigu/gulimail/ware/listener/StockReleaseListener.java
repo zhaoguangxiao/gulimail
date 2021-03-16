@@ -1,6 +1,7 @@
 package com.atguigu.gulimail.ware.listener;
 
 import com.alibaba.fastjson.TypeReference;
+import com.atguigu.common.to.mq.OrderEntityTo;
 import com.atguigu.common.to.mq.StockDetailTo;
 import com.atguigu.common.to.mq.StockLockSuccessTo;
 import com.atguigu.common.utils.R;
@@ -53,4 +54,16 @@ public class StockReleaseListener {
     }
 
 
+
+    @RabbitHandler
+    public void handleOrderLockedRelease(OrderEntityTo orderEntityTo, Channel channel, Message message) throws IOException {
+        log.info("收到订单关闭,准备解锁库存的消息 订单信息为 : {}", orderEntityTo);
+        try {
+            wareSkuService.unlockStock(orderEntityTo);
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+        } catch (Exception e) {
+            //拒绝接受此消息--重新放入队列让别人继续消费解锁
+            channel.basicReject(message.getMessageProperties().getDeliveryTag(), true);
+        }
+    }
 }

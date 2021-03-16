@@ -49,5 +49,9 @@
         <result property="remark" column="remark"/>
     </resultMap>
 
+    <update id="updateOrderByOrderSn">
+        update oms_order set status=#{status} where order_sn=#{orderSn}
+    </update>
+
 
 </mapper>

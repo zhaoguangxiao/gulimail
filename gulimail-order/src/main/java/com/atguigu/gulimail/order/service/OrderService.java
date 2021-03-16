@@ -1,8 +1,6 @@
 package com.atguigu.gulimail.order.service;
 
-import com.atguigu.gulimail.order.vo.OrderConfirmVo;
-import com.atguigu.gulimail.order.vo.OrderSubmitVo;
-import com.atguigu.gulimail.order.vo.ResponseSubmitOrderVo;
+import com.atguigu.gulimail.order.vo.*;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.gulimail.order.entity.OrderEntity;
@@ -21,6 +19,8 @@ public interface OrderService extends IService<OrderEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 
+    PageUtils queryPageWithItem(Map<String, Object> params);
+
     /**
      * @return 订单确认页面返回需要的数据
      */
@@ -36,5 +36,34 @@ public interface OrderService extends IService<OrderEntity> {
      */
     Integer getOrderStatus(String orderSn);
 
+
+    OrderEntity getOrderEntityByOrderSn(String orderSn);
+
+    /**
+     * 关闭订单
+     *
+     * @param orderEntity
+     */
+    void orderClose(OrderEntity orderEntity);
+
+    /**
+     * 根据订单号返回订单详细信息
+     *
+     * @param orderSn
+     * @return
+     */
+    PayVo getOrderPay(String orderSn);
+
+
+    /**
+     * 如果支付成功异步通知服务
+     *
+     * @param payAsyncVo
+     * @return 成功返回 success 失败返回error
+     */
+    String handlerAlipayed(PayAsyncVo payAsyncVo);
+
+
+    int updateOrderStatus(String orderSn,Integer status);
 }
 
