@@ -25,6 +25,7 @@
         <module>gulimail-search</module>
         <module>gulimail-auth-server</module>
         <module>gulimail-cart</module>
+        <module>gulimail-seckill</module>
     </modules>
 
 
@@ -45,6 +46,7 @@
         <elasticsearch.version>7.10.1</elasticsearch.version>
         <seata-version>1.4.1</seata-version>
         <alipay.sdk.java.version>4.11.54.ALL</alipay.sdk.java.version>
+        <redisson.version>3.13.4</redisson.version>
     </properties>
 
 

@@ -1,0 +1,19 @@
+spring:
+  task:
+    execution:
+      pool:
+        max-size: 50 #默认为 Integer.MAX_VALUE 不能让你无限创建
+        core-size: 20 #核心线程数
+  application:
+    name: gulimail-seckill
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 47.103.16.140:8848   #服务注册进服务中心
+  redis:
+    host: 192.168.247.111
+
+
+
+server:
+  port: 25000

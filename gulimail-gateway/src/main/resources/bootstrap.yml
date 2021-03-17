@@ -25,6 +25,14 @@ spring:
           filters:
             - RewritePath=/api/(?<segment>.*), /$\{segment}
 
+        - id: gulimail-coupon # 路由的id,没有规定规则但要求唯一,建议配合服务名
+          #匹配后提供服务的路由地址
+          uri: lb://gulimail-coupon-7000
+          predicates:
+            - Path=/api/coupon/** # 断言，路径相匹配的进行路由
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+
        #精确的优先级放前面
         - id: gulimail-product  #商品服务
           uri: lb://gulimail-product

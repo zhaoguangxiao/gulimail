@@ -27,6 +27,7 @@ import com.atguigu.common.utils.R;
 @RestController
 @RequestMapping("coupon/seckillpromotion")
 public class SeckillPromotionController {
+
     @Autowired
     private SeckillPromotionService seckillPromotionService;
 

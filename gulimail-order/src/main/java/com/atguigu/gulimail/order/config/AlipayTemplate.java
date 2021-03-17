@@ -42,6 +42,8 @@ public class AlipayTemplate {
 
     // 字符编码格式
     private String charSet;
+    //1分钟后自动收单
+    private String timeExpire;
 
     // 支付宝网关； https://openapi.alipaydev.com/gateway.do
     private String gatewayUrl;
@@ -68,10 +70,13 @@ public class AlipayTemplate {
         //商品描述，可空
         String body = vo.getBody();
 
+
+        //参考文档  https://opendocs.alipay.com/apis/api_1/alipay.trade.page.pay/?scene=API002020081300013629
         alipayRequest.setBizContent("{\"out_trade_no\":\"" + out_trade_no + "\","
                 + "\"total_amount\":\"" + total_amount + "\","
                 + "\"subject\":\"" + subject + "\","
                 + "\"body\":\"" + body + "\","
+                + "\"time_expire\":\"" + timeExpire + "\","
                 + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\"}");
 
         String result = alipayClient.pageExecute(alipayRequest).getBody();

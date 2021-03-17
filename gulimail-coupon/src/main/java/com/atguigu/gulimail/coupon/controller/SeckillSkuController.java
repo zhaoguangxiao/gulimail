@@ -25,7 +25,7 @@ import com.atguigu.common.utils.R;
  * @date 2021-01-21 09:15:30
  */
 @RestController
-@RequestMapping("coupon/seckillsku")
+@RequestMapping("coupon/seckillskurelation")
 public class SeckillSkuController {
     @Autowired
     private SeckillSkuService seckillSkuService;
