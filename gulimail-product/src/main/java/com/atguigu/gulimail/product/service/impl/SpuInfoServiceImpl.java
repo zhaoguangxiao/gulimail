@@ -11,12 +11,11 @@ import com.atguigu.common.utils.R;
 import com.atguigu.gulimail.product.dao.SpuInfoDao;
 import com.atguigu.gulimail.product.entity.*;
 import com.atguigu.gulimail.product.feign.ESSaveFeignService;
-import com.atguigu.gulimail.product.feign.SkuBoundsFeignService;
+import com.atguigu.gulimail.product.feign.CouponFeignService;
 import com.atguigu.gulimail.product.feign.WareSkuFeignService;
 import com.atguigu.gulimail.product.service.*;
 import com.atguigu.gulimail.product.vo.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.seata.spring.annotation.GlobalTransactional;
@@ -72,7 +71,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     private SkuImagesService skuImagesService;
 
     @Autowired
-    private SkuBoundsFeignService skuBoundsFeignService;
+    private CouponFeignService couponFeignService;
 
 
     @Autowired
@@ -137,7 +136,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         Bounds bounds = spuSaveVo.getBounds();
         BeanUtils.copyProperties(bounds, skuBoundsTo);
         skuBoundsTo.setSpuId(spuInfoEntity.getId());
-        R r = skuBoundsFeignService.saveSkuBounds(skuBoundsTo);
+        R r = couponFeignService.saveSkuBounds(skuBoundsTo);
         log.info("feign商品积分信息保存结果为 {}", r.get("code").toString());
 
 
@@ -197,7 +196,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                 BeanUtils.copyProperties(each, reductionTo);
                 reductionTo.setSkuId(skuId);
                 if (reductionTo.getFullCount() > 0 || reductionTo.getFullPrice().compareTo(new BigDecimal(0)) == 1) {
-                    R r1 = skuBoundsFeignService.saveSkuReduction(reductionTo);
+                    R r1 = couponFeignService.saveSkuReduction(reductionTo);
                     log.info("优惠满减信息保存,结果为{}", r1.get("code").toString());
                 }
             });

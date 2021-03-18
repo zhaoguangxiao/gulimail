@@ -16,4 +16,9 @@ public interface SeckillService {
      */
     List<SeckillSkuRedisDetailsTo> getCurrentSeckillSkus();
 
+    /** 根据skuid 从redis 获取活动详情
+     * @param skuId
+     * @return
+     */
+    SeckillSkuRedisDetailsTo getSeckillBuSkuId(Long skuId);
 }

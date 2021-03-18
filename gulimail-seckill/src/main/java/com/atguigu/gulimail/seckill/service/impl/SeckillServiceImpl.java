@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.atguigu.common.constant.SeckillRedisConstant.*;
@@ -151,8 +152,34 @@ public class SeckillServiceImpl implements SeckillService {
                 break; //跳出循环
             }
         }
+        return null;
+    }
 
+    @Override
+    public SeckillSkuRedisDetailsTo getSeckillBuSkuId(Long skuId) {
+        //找到所有带有 当前skuId的key
+        BoundHashOperations<String, String, String> hashOps = stringRedisTemplate.boundHashOps(SECKILL_REDIS_SKU_KEY);
+        Set<String> keys = hashOps.keys();
+        if (!CollectionUtils.isEmpty(keys)) {
+            String regex = "\\d_" + skuId;
+            for (String key : keys) {
+                if (Pattern.matches(regex, key)) {
+                    SeckillSkuRedisDetailsTo detailsTo = JSON.parseObject(hashOps.get(key).toString(), new TypeReference<SeckillSkuRedisDetailsTo>() {
+                    });
 
+                    long time = new Date().getTime();
+                    Long startTime = detailsTo.getStartTime();
+                    Long endTime = detailsTo.getEndTime();
+                    if (time>=startTime && time<= endTime){
+                        return detailsTo;
+                    }else {
+                        //清空随机码
+                        detailsTo.setRandomCode(null);
+                        return detailsTo;
+                    }
+                }
+            }
+        }
         return null;
     }
 }

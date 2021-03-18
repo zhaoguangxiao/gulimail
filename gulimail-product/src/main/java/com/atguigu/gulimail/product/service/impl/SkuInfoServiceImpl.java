@@ -9,9 +9,11 @@ import com.atguigu.gulimail.product.dao.SkuInfoDao;
 import com.atguigu.gulimail.product.entity.SkuImagesEntity;
 import com.atguigu.gulimail.product.entity.SkuInfoEntity;
 import com.atguigu.gulimail.product.entity.SpuInfoDescEntity;
+import com.atguigu.gulimail.product.feign.SeckillFeignService;
 import com.atguigu.gulimail.product.feign.WareSkuFeignService;
 import com.atguigu.gulimail.product.service.*;
 import com.atguigu.gulimail.product.vo.ResponseItemSkuVo;
+import com.atguigu.gulimail.product.vo.SeckillSkuRedisDetailsTo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -33,6 +35,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Service("skuInfoService")
 public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> implements SkuInfoService {
 
+
+    @Autowired
+    private SeckillFeignService seckillFeignService;
 
     @Autowired
     private SkuSaleAttrValueService skuSaleAttrValueService;
@@ -170,8 +175,17 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
         }, threadPoolExecutor);
 
 
+        //远程查询 是否参与秒杀服务
+        CompletableFuture<Void> seckillFuture = CompletableFuture.runAsync(() -> {
+            R buSkuId = seckillFeignService.getSeckillBuSkuId(skuid);
+            log.info("商品详情页,远程调用秒杀服务的接口 如果为0表示成功 {}",buSkuId.get("code"));
+            SeckillSkuRedisDetailsTo data = buSkuId.getData(new TypeReference<SeckillSkuRedisDetailsTo>() {
+            });
+            itemSkuVo.setSeckillSkuRedisDetailsTo(data);
+        }, threadPoolExecutor);
+
         //等待所有任务完成
-        CompletableFuture.allOf(saleAttrFuture, descFuture, attrFuture, imagesFuture, wareskuFuture).get();
+        CompletableFuture.allOf(saleAttrFuture, descFuture, attrFuture, imagesFuture, wareskuFuture,seckillFuture).get();
 
 
         return itemSkuVo;

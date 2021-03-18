@@ -34,7 +34,7 @@ public class SeckillSkuScheduled {
     /**
      * 需要进行幂等性处理
      */
-    @Scheduled(cron = "*/3 * * * * ?")
+    @Scheduled(cron = "*/30 * * * * ?")
     public void uploadSeckillSkuLatest3Day() {
         log.info("正在准备上架秒杀商品...");
         //1 重复上架无需处理

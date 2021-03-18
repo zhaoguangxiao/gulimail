@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @FeignClient(value = "gulimail-coupon-7000")
-public interface SkuBoundsFeignService {
+public interface CouponFeignService {
 
     @PostMapping("/coupon/skubounds/save")
     R saveSkuBounds(@RequestBody SkuBoundsTo skuBoundsTo);

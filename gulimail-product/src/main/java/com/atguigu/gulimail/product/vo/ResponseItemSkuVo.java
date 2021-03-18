@@ -20,6 +20,7 @@ public class ResponseItemSkuVo {
     private SpuInfoDescEntity spuInfoDescEntity; //获取spu描述信息
     private List<ItemSkuSaleAttrVo> saleAttrVos; //销售属性集合
     private List<ItemSpuBaseAttrVo> itemSpuBaseAttrVos; //获取spu的规格参数信息
+    private SeckillSkuRedisDetailsTo seckillSkuRedisDetailsTo; //获取当前商品秒杀信息
 
     @Data
     public static class ItemSkuSaleAttrVo {
