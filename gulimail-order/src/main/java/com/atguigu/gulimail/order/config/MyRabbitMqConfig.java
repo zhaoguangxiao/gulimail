@@ -3,6 +3,7 @@ package com.atguigu.gulimail.order.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -66,11 +67,11 @@ public class MyRabbitMqConfig {
              */
             @Override
             public void returnedMessage(Message message, int replyCode, String replyText, String exchange, String routingKey) {
-              log.info("message {} ",message);
-              log.info("replyCode {} ",replyCode);
-              log.info("replyText {} ",replyText);
-              log.info("exchange {} ",exchange);
-              log.info("routingKey {} ",routingKey);
+                log.info("message {} ", message);
+                log.info("replyCode {} ", replyCode);
+                log.info("replyText {} ", replyText);
+                log.info("exchange {} ", exchange);
+                log.info("routingKey {} ", routingKey);
             }
         });
     }

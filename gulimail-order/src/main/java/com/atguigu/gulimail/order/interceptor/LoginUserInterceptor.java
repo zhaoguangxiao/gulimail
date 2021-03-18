@@ -13,6 +13,7 @@ import static com.atguigu.common.constant.LoginUserConstant.LOGIN_USER_KEY;
 
 @Component
 public class LoginUserInterceptor implements HandlerInterceptor {
+
     public static final ThreadLocal<LoginUserVo> threadLocal = new ThreadLocal<>();
 
     @Override

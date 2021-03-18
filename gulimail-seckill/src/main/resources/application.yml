@@ -12,8 +12,24 @@ spring:
         server-addr: 47.103.16.140:8848   #服务注册进服务中心
   redis:
     host: 192.168.247.111
+  cache:
+    type: redis  #配置session的存储方式
+  rabbitmq:
+    host: 192.168.247.111  #配置rabbitmq 的IP地址
+    username: guest
+    password: guest
+    port: 5672
+    virtual-host: /
+    listener:
+      simple:
+        acknowledge-mode: manual #手动消息接收
 
 
 
 server:
   port: 25000
+
+domain:
+  name:
+    domainName: gulimail.com #顶级父域名 因为现在在auth.gulimail.com 顶级域名为 gulimail.com 全局生效
+    cookieName: GULIMAIL_SESSION  #cookie在本地显示的名称可以随便设置

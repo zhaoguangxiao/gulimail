@@ -4,6 +4,7 @@ import cn.hutool.core.util.IdUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.atguigu.common.to.mq.OrderEntityTo;
+import com.atguigu.common.to.mq.QuickOrderSeckillTo;
 import com.atguigu.common.to.ware.ResponseSkuHasStockVo;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.Query;
@@ -505,5 +506,41 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     @Override
     public int updateOrderStatus(String orderSn, Integer status) {
         return this.baseMapper.updateOrderByOrderSn(orderSn, status);
+    }
+
+    @Override
+    @Transactional
+    public void quickOrderSeckill(QuickOrderSeckillTo quickOrderSeckillTo) {
+        //1 创建一个订单
+        OrderEntity orderEntity = createOrder(quickOrderSeckillTo);
+        //todo 可以远程调用会员服务查询用户详细信息
+        this.save(orderEntity);
+        //2 创建订单详情
+        OrderItemEntity orderItemEntity = createOrderEntity(quickOrderSeckillTo);
+        orderItemService.save(orderItemEntity);
+    }
+
+    private OrderItemEntity createOrderEntity(QuickOrderSeckillTo quickOrderSeckillTo) {
+        OrderItemEntity entity = new OrderItemEntity();
+        entity.setOrderSn(quickOrderSeckillTo.getOrderSn());
+        entity.setSpuId(quickOrderSeckillTo.getSkuId());
+        entity.setSkuQuantity(quickOrderSeckillTo.getNum());
+        BigDecimal totalPrice = new BigDecimal(quickOrderSeckillTo.getNum()).multiply(quickOrderSeckillTo.getSeckillPrice());
+        entity.setRealAmount(totalPrice);
+        return entity;
+    }
+
+    private OrderEntity createOrder(QuickOrderSeckillTo quickOrderSeckillTo) {
+        OrderEntity orderEntity = new OrderEntity();
+        //设置订单号
+        orderEntity.setOrderSn(quickOrderSeckillTo.getOrderSn());
+        orderEntity.setCreateTime(new Date());
+        orderEntity.setUserId(quickOrderSeckillTo.getUserId());
+        orderEntity.setStatus(CREATE_NEW.getCode());
+        //订单总额
+        orderEntity.setTotalAmount(quickOrderSeckillTo.getSeckillPrice());
+        //应付总额
+        orderEntity.setPayAmount(quickOrderSeckillTo.getSeckillPrice());
+        return orderEntity;
     }
 }

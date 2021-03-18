@@ -1,6 +1,7 @@
 package com.atguigu.gulimail.seckill.service;
 
 import com.atguigu.gulimail.seckill.to.SeckillSkuRedisDetailsTo;
+import com.atguigu.gulimail.seckill.vo.RequestSeckillVo;
 
 import java.util.List;
 
@@ -21,4 +22,10 @@ public interface SeckillService {
      * @return
      */
     SeckillSkuRedisDetailsTo getSeckillBuSkuId(Long skuId);
+
+    /** 立即秒杀
+     * @param requestSeckillVo
+     * @return
+     */
+    String checkSeckill(RequestSeckillVo requestSeckillVo) throws InterruptedException;
 }

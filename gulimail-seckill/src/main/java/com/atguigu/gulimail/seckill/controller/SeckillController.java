@@ -4,6 +4,7 @@ package com.atguigu.gulimail.seckill.controller;
 import com.atguigu.common.utils.R;
 import com.atguigu.gulimail.seckill.service.SeckillService;
 import com.atguigu.gulimail.seckill.to.SeckillSkuRedisDetailsTo;
+import com.atguigu.gulimail.seckill.vo.RequestSeckillVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,10 +34,28 @@ public class SeckillController {
     }
 
 
+    /**
+     * 根据sku 查询是否有活动场次
+     *
+     * @param skuId
+     * @return
+     */
     @GetMapping(value = "/seckill/{skuId}")
-    public R getSeckillBuSkuId(@PathVariable("skuId") Long skuId){
-        SeckillSkuRedisDetailsTo seckillSkuRedisDetailsTo=seckillService.getSeckillBuSkuId(skuId);
+    public R getSeckillBuSkuId(@PathVariable("skuId") Long skuId) {
+        SeckillSkuRedisDetailsTo seckillSkuRedisDetailsTo = seckillService.getSeckillBuSkuId(skuId);
         return R.ok().setData(seckillSkuRedisDetailsTo);
     }
+
+    @GetMapping(value = "/checkseckill")
+    public R checkSeckill(RequestSeckillVo requestSeckillVo) {
+        //1 自己的秒杀服务判断是否登录 使用 LoginInterceptor 过滤登录用户信息
+        try {
+            String orderSn = seckillService.checkSeckill(requestSeckillVo);
+            return R.ok().setData(orderSn);
+        } catch (InterruptedException e) {
+            return R.error();
+        }
+    }
+
 
 }

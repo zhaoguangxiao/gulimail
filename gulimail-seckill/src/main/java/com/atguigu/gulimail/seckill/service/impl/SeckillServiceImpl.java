@@ -1,30 +1,37 @@
 package com.atguigu.gulimail.seckill.service.impl;
 
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.atguigu.common.to.mq.QuickOrderSeckillTo;
 import com.atguigu.common.utils.R;
+import com.atguigu.common.vo.LoginUserVo;
 import com.atguigu.gulimail.seckill.feign.CouponFeignService;
 import com.atguigu.gulimail.seckill.feign.ProductFeignService;
+import com.atguigu.gulimail.seckill.interceptor.LoginInterceptor;
 import com.atguigu.gulimail.seckill.service.SeckillService;
 import com.atguigu.gulimail.seckill.to.SeckillSkuRedisDetailsTo;
+import com.atguigu.gulimail.seckill.vo.RequestSeckillVo;
 import com.atguigu.gulimail.seckill.vo.SeckillSessionEntityVo;
 import com.atguigu.gulimail.seckill.vo.SkuInfoEntityVo;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.redisson.api.RSemaphore;
 import org.redisson.api.RedissonClient;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collections;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -35,6 +42,9 @@ import static com.atguigu.common.constant.SeckillRedisConstant.*;
 @Service
 public class SeckillServiceImpl implements SeckillService {
 
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Autowired
     private RedissonClient redissonClient;
@@ -170,9 +180,9 @@ public class SeckillServiceImpl implements SeckillService {
                     long time = new Date().getTime();
                     Long startTime = detailsTo.getStartTime();
                     Long endTime = detailsTo.getEndTime();
-                    if (time>=startTime && time<= endTime){
+                    if (time >= startTime && time <= endTime) {
                         return detailsTo;
-                    }else {
+                    } else {
                         //清空随机码
                         detailsTo.setRandomCode(null);
                         return detailsTo;
@@ -182,4 +192,83 @@ public class SeckillServiceImpl implements SeckillService {
         }
         return null;
     }
+
+
+    @Override
+    public String checkSeckill(RequestSeckillVo requestSeckillVo) throws InterruptedException {
+        long timeMillis = System.currentTimeMillis();
+        log.info("秒杀开始 {}", timeMillis);
+        LoginUserVo userVo = LoginInterceptor.threadLocal.get();
+
+        //1 获取当前商品的详细秒杀信息
+        BoundHashOperations<String, String, String> hashOps = stringRedisTemplate.boundHashOps(SECKILL_REDIS_SKU_KEY);
+        String result = hashOps.get(requestSeckillVo.getKillId());
+        if (StrUtil.isNotEmpty(result)) {
+            //获取当前秒杀商品的详细信息
+            SeckillSkuRedisDetailsTo detailsTo = JSON.parseObject(result, new TypeReference<SeckillSkuRedisDetailsTo>() {
+            });
+            //2 校验时间是否合法
+            if (checkTimeLegitimacy(detailsTo)) {
+                //3 校验随机码是否合法
+                if (checkRandomCodeAndKey(requestSeckillVo, detailsTo)) {
+                    //4 验证购物数量是否合理
+                    if (checkNum(requestSeckillVo, detailsTo.getSeckillSkuEntityVo().getSeckillLimit())) {
+                        //5 检验这个人是否已经购买过了 --幂等性处理如果只要秒杀成功, 就去redis 站位 key 为 userId_sessonid_skuid
+                        String redisKeyNx = userVo.getId() + "_" + detailsTo.getSeckillSkuEntityVo().getId() + "_" + detailsTo.getSkuInfoEntityVo().getSkuId();
+                        //5-1 自动过期
+                        Long redisTime = detailsTo.getEndTime() - new Date().getTime();
+                        Boolean ifAbsent = stringRedisTemplate.opsForValue().setIfAbsent(redisKeyNx, requestSeckillVo.getNum().toString(), redisTime, TimeUnit.MILLISECONDS);
+                        if (ifAbsent) {
+                            //6 分布式信号量能否成功扣减
+                            RSemaphore semaphore = redissonClient.getSemaphore(SECKILL_SKU_STOCK_SEAPHORE_KEY + requestSeckillVo.getRandomCode());
+                            //6-1 从信号量取出几个
+                            if (semaphore.tryAcquire(requestSeckillVo.getNum())) {
+                                //7 快速下单
+                                //7-1 快速下单逻辑向mq 发送消息
+                                String orderSn = IdWorker.getTimeId();
+                                QuickOrderSeckillTo quickOrderSeckillTo = new QuickOrderSeckillTo(
+                                        orderSn,
+                                        detailsTo.getSkuInfoEntityVo().getSkuId(),
+                                        detailsTo.getSeckillSkuEntityVo().getPromotionSessionId(),
+                                        detailsTo.getSeckillSkuEntityVo().getSeckillPrice(),
+                                        requestSeckillVo.getNum(),
+                                        userVo.getId()
+                                );
+                                rabbitTemplate.convertAndSend("order-event-exchange", "order.seckill.order", quickOrderSeckillTo);
+                                log.info("秒杀成功并结束 耗时 {}", System.currentTimeMillis() - timeMillis);
+                                return orderSn; //秒杀成功
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private Boolean checkNum(RequestSeckillVo requestSeckillVo, BigDecimal limit) {
+        return new BigDecimal(requestSeckillVo.getNum()).subtract(limit).intValue() <= 0;
+    }
+
+    private Boolean checkRandomCodeAndKey(RequestSeckillVo requestSeckillVo, SeckillSkuRedisDetailsTo detailsTo) {
+        //获取前端传来的 key
+        String killId = requestSeckillVo.getKillId(); //1_skuid
+        //获取前端传来的随机码
+        String code = requestSeckillVo.getRandomCode();
+        //获取redis 的key
+        String redisKey = detailsTo.getSeckillSkuEntityVo().getPromotionSessionId() + "_" + detailsTo.getSkuInfoEntityVo().getSkuId();
+        //获取redis 的随机码
+        String randomCode = detailsTo.getRandomCode();
+        return ObjectUtil.equal(killId, redisKey) && ObjectUtil.equal(code, randomCode);
+    }
+
+    private Boolean checkTimeLegitimacy(SeckillSkuRedisDetailsTo detailsTo) {
+        Long startTime = detailsTo.getStartTime();
+        Long endTime = detailsTo.getEndTime();
+        long now = new Date().getTime();
+        if (now >= startTime && now <= endTime) return true;
+        return false;
+    }
+
+
 }

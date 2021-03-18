@@ -79,4 +79,24 @@ public class MyCreateRabbitmqConfig {
     }
 
 
+    @Bean
+    public Queue orderSeckillQueue() {
+        return new Queue("order.seckill.order.queue",
+                true,
+                false,
+                false,
+                null
+        );
+    }
+
+    @Bean
+    public Binding orderSeckillQueueBinding() {
+        return new Binding("order.seckill.order.queue",
+                Binding.DestinationType.QUEUE,
+                "order-event-exchange",
+                "order.seckill.order",
+                null);
+    }
+
+
 }

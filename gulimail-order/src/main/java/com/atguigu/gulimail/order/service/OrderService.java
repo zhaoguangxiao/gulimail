@@ -1,5 +1,6 @@
 package com.atguigu.gulimail.order.service;
 
+import com.atguigu.common.to.mq.QuickOrderSeckillTo;
 import com.atguigu.gulimail.order.vo.*;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.common.utils.PageUtils;
@@ -65,5 +66,8 @@ public interface OrderService extends IService<OrderEntity> {
 
 
     int updateOrderStatus(String orderSn,Integer status);
+
+    void quickOrderSeckill(QuickOrderSeckillTo quickOrderSeckillTo);
+
 }
 
