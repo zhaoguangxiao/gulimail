@@ -5,6 +5,10 @@ spring:
   application:
     name: gulimail-cart
   cloud:
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: 127.0.0.1:8333
     nacos:
       discovery:
         server-addr: 47.103.16.140:8848
@@ -29,3 +33,11 @@ gulimail:
     core-pool-size: 20
     maximum-pool-size: 200
     keep-alive-time: 10
+
+
+#暴露全部端口
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

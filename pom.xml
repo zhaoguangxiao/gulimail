@@ -47,6 +47,7 @@
         <seata-version>1.4.1</seata-version>
         <alipay.sdk.java.version>4.11.54.ALL</alipay.sdk.java.version>
         <redisson.version>3.13.4</redisson.version>
+        <sentinel.version>2.2.1.RELEASE</sentinel.version>
     </properties>
 
 

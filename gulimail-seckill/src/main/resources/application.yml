@@ -7,6 +7,10 @@ spring:
   application:
     name: gulimail-seckill
   cloud:
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: 127.0.0.1:8333
     nacos:
       discovery:
         server-addr: 47.103.16.140:8848   #服务注册进服务中心
@@ -34,3 +38,12 @@ domain:
   name:
     domainName: gulimail.com #顶级父域名 因为现在在auth.gulimail.com 顶级域名为 gulimail.com 全局生效
     cookieName: GULIMAIL_SESSION  #cookie在本地显示的名称可以随便设置
+
+
+
+#暴露全部端口
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

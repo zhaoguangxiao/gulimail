@@ -32,6 +32,10 @@ spring:
   application:
     name: gulimail-coupon-7000  #当前服务名字
   cloud:
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: 127.0.0.1:8333
     nacos:
       config:
         ext-config[0]:
@@ -56,3 +60,12 @@ spring:
 logging:
   level:
     com.atguigu.gulimail: debug  #打印debut日志
+
+
+
+#暴露全部端口
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

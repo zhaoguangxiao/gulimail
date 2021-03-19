@@ -22,7 +22,8 @@ public enum BizCodeEnume {
 
     UNKNOW_Exception(1000, "系统未知异常"),
     VAILD_Exception(10001, "参数格式校验失败"),
-    VAILD_SMS_CODE_Exception(10002, "短信发送过于频繁,请稍后重试"),
+    REQUEST_FLOW_MAX_EXCEPTION(10003,"请求流量过大,无法访问"),
+    VAILD_SMS_CODE_Exception(10004, "短信发送过于频繁,请稍后重试"),
     DELETION_FAILED(10002, "无法进行删除,含有子分类"),
     PRODUCT_UP_FAILED(11000, "商品上架异常"),
     USER_REGISTER_CONTRARY_EXCEPTION(15000, "用户注册出现了意外之外的问题"),

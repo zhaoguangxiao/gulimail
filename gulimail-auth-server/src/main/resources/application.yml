@@ -11,6 +11,10 @@ spring:
     nacos: #配置nocos 注册中心
       discovery:
         server-addr: 47.103.16.140:8848
+    sentinel: #配置 sentinel 信息
+      transport:
+        dashboard: 127.0.0.1:8333
+        port: 8719  #传输数据的接口
   thymeleaf:
     cache: false
 server:
@@ -30,3 +34,10 @@ github:
     clientId: 7a5fefb44152bc4299e7
     clientSecret: 0fc96714c439204c3327218493c2aca1d8c1cf03
     callback: http://auth.gulimail.com/github/callback
+
+#暴露全部端口
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

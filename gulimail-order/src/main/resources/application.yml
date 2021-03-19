@@ -6,6 +6,10 @@ spring:
   session:
     store-type: redis
   cloud:
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: 127.0.0.1:8333
     nacos:
       discovery:
         server-addr: 47.103.16.140:8848
@@ -70,3 +74,11 @@ alipay:
   charSet: utf-8
   gatewayUrl: https://openapi.alipaydev.com/gateway.do
   timeExpire: 1m
+
+
+#暴露全部端口
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

@@ -8,6 +8,10 @@ spring:
   application:
     name: gulimail-member  #服务名字
   cloud:
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: 127.0.0.1:8333
     nacos:
       discovery:
         server-addr: 47.103.16.140:8848  #配置Nacos 的IP地址
@@ -19,3 +23,9 @@ mybatis-plus:
     db-config:
       id-type: auto  #主键类型  AUTO:"数据库ID自增", INPUT:"用户输入ID", ID_WORKER:"全局唯一ID (数字类型唯一ID)", UUID:"全局唯一ID UUID";
 
+#暴露全部端口
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
