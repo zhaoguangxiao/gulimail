@@ -24,6 +24,15 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  *  4), nacos 新建本地微服务的配置文件 {spring.application.name}-txt-group  (注意: 类型为 SEATA_GROUP 内容为txt 的 default)
  *  5), 在 templates 文件下面添加 file.conf 与 registry,conf 文件 并在 application.yml 添加 tx-service-group: ${spring.application.name}-fescar-service-group
  *
+ *
+ *
+ *  使用sentinel 来保护feign 调用,熔断
+ *  1), 调用方的熔断,feign.sentinel.enable=true
+ *  2), 调用方手动指定远程服务的降级策略,远程服务被降级处理,触发我们的熔断回调方法
+ *  3),超大浏览的时候,必须牺牲一些远程服务,在服务的提供方(远程服务)指定降级策略,提供方是在运行,但是不运行自己的业务逻辑,返回的是默认的数据(限流的数据)
+ *
+ *
+ *
  */
 @EnableFeignClients(basePackages = "com.atguigu.gulimail.product.feign")
 @EnableDiscoveryClient

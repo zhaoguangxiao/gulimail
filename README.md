@@ -12,20 +12,20 @@
     - Lombok: @Data @Sl4fj
 
 # 效果图
-**谷粒商城首页 **
+**谷粒商城首页**
 ![Alt text](https://github.com/zhaoguangxiao/gulimail/blob/master/gulimail-product/src/main/resources/static/images/index.png)
-**谷粒商城详情页面 **
+**谷粒商城详情页面**
 ![Alt text](https://github.com/zhaoguangxiao/gulimail/blob/master/gulimail-product/src/main/resources/static/images/item.png)
-**谷粒商城登录页面 **
+**谷粒商城登录页面**
 ![Alt text](https://github.com/zhaoguangxiao/gulimail/blob/master/gulimail-auth-server/src/main/resources/static/login.png)
-**谷粒商城注册页面 **
+**谷粒商城注册页面**
 ![Alt text](https://github.com/zhaoguangxiao/gulimail/blob/master/gulimail-auth-server/src/main/resources/static/register.png)
 
-**谷粒商城搜索页面 **
+**谷粒商城搜索页面**
 ![Alt text](https://github.com/zhaoguangxiao/gulimail/blob/master/gulimail-search/src/main/resources/static/images/search.png)
-**谷粒商城购物车页面 **
+**谷粒商城购物车页面**
 ![Alt text](https://github.com/zhaoguangxiao/gulimail/blob/master/gulimail-cart/src/main/resources/static/images/cart.png)
-**谷粒商城购物车页面 **
+**谷粒商城购物车页面**
 ![Alt text](https://github.com/zhaoguangxiao/gulimail/blob/master/gulimail-order/src/main/resources/static/images/order.png)
-**谷粒商城购物车确认页面 **
+**谷粒商城购物车确认页面**
 ![Alt text](https://github.com/zhaoguangxiao/gulimail/blob/master/gulimail-order/src/main/resources/static/images/order_confirm.png)
