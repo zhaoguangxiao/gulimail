@@ -23,7 +23,8 @@ spring:
     listener:
       simple:
         acknowledge-mode: manual #手动消息接收
-
+  thymeleaf:
+    cache: false
 
 
 server:

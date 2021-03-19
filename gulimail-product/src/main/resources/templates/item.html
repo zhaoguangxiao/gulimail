@@ -658,7 +658,7 @@
                         </div>
                     </div>
                     <div class="box-btns-two"
-                         th:if="${#dates.createNow().getTime() >= responseItemSkuVo.seckillSkuRedisDetailsTo.startTime && #dates.createNow().getTime() <= responseItemSkuVo.seckillSkuRedisDetailsTo.endTime}">
+                         th:if="${(responseItemSkuVo.seckillSkuRedisDetailsTo != null) && (#dates.createNow().getTime() >= responseItemSkuVo.seckillSkuRedisDetailsTo.startTime && #dates.createNow().getTime() <= responseItemSkuVo.seckillSkuRedisDetailsTo.endTime)}">
                         <a href="#" id="seckillClick"
                            th:attr="skuId=${responseItemSkuVo.skuInfoEntity.skuId},sessionId=${responseItemSkuVo.seckillSkuRedisDetailsTo.seckillSkuEntityVo.promotionSessionId},code=${responseItemSkuVo.seckillSkuRedisDetailsTo.randomCode}">
                             立即秒杀
@@ -666,7 +666,7 @@
                     </div>
 
                     <div class="box-btns-two"
-                         th:if="${#dates.createNow().getTime() <= responseItemSkuVo.seckillSkuRedisDetailsTo.startTime && #dates.createNow().getTime() >= responseItemSkuVo.seckillSkuRedisDetailsTo.endTime}">
+                         th:if="${(responseItemSkuVo.seckillSkuRedisDetailsTo == null) || (#dates.createNow().getTime() <= responseItemSkuVo.seckillSkuRedisDetailsTo.startTime && #dates.createNow().getTime() >= responseItemSkuVo.seckillSkuRedisDetailsTo.endTime)}">
                         <a href="#" id="addToCart" th:attr="skuId=${responseItemSkuVo.skuInfoEntity.skuId}">
                             加入购物车
                         </a>

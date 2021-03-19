@@ -194,8 +194,13 @@ public class SeckillServiceImpl implements SeckillService {
     }
 
 
+    /** 商家秒杀商品的时候,每一个数据都有过期时间
+     * 秒杀后续的流程,简化了收货地址
+     * @param requestSeckillVo
+     * @return
+     */
     @Override
-    public String checkSeckill(RequestSeckillVo requestSeckillVo) throws InterruptedException {
+    public String checkSeckill(RequestSeckillVo requestSeckillVo) {
         long timeMillis = System.currentTimeMillis();
         log.info("秒杀开始 {}", timeMillis);
         LoginUserVo userVo = LoginInterceptor.threadLocal.get();

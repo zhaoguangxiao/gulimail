@@ -27,5 +27,5 @@ public interface SeckillService {
      * @param requestSeckillVo
      * @return
      */
-    String checkSeckill(RequestSeckillVo requestSeckillVo) throws InterruptedException;
+    String checkSeckill(RequestSeckillVo requestSeckillVo);
 }
