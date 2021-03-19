@@ -12,3 +12,10 @@
     - Lombok: @Data @Sl4fj
 
 # 效果图
+![Alt text](https://github.com/zhaoguangxiao/gulimail/blob/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20210319105018.png)
+
+![Alt text](https://github.com/zhaoguangxiao/gulimail/blob/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20210319105025.png)
+
+![Alt text](https://github.com/zhaoguangxiao/gulimail/blob/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20210319105032.png)
+
+![Alt text](https://github.com/zhaoguangxiao/gulimail/blob/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20210319105038.png)
