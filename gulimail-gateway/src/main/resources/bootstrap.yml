@@ -2,6 +2,11 @@ spring:
   application:
     name: gulimail-gateway
   cloud:
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: 127.0.0.1:8333
+
     nacos:
       config:
         server-addr: 47.103.16.140:8848  #配置Nacos 的IP地址

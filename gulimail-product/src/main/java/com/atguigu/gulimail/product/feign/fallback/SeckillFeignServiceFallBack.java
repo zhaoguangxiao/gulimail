@@ -19,7 +19,7 @@ public class SeckillFeignServiceFallBack implements SeckillFeignService {
 
     @Override
     public R getSeckillBuSkuId(Long skuId) {
-        log.info("执行了熔断方法 {}", skuId);
+        log.error("执行了熔断方法 {}", skuId);
         return R.error(REQUEST_FLOW_MAX_EXCEPTION.getCode(), REQUEST_FLOW_MAX_EXCEPTION.getMessage());
     }
 }

@@ -132,7 +132,7 @@
         </dependency>
 
 
-        <!--    服务熔断限流    -->
+        <!--   1 服务熔断限流    -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>

@@ -14,7 +14,7 @@ import java.io.IOException;
 import static com.atguigu.common.exception.BizCodeEnume.REQUEST_FLOW_MAX_EXCEPTION;
 
 /**
- * 返回 sentinel 自定义返回数据格式
+ * 3 返回 sentinel 自定义返回数据格式
  */
 @Configuration
 public class MySentinelConfig {
