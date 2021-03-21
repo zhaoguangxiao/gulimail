@@ -50,6 +50,12 @@
             <version>${sentinel.version}</version>
         </dependency>
 
+        <!--   引入链路追踪 和可视化界面    -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-zipkin</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

@@ -1,5 +1,13 @@
 # DataSource Config
 spring:
+  zipkin:
+    base-url: http://192.168.247.111:9411/  #zipkin 服务器地址
+    discovery-client-enabled: false #关闭服务发现,否则springcloud 会把zipkin 的url当做服务名称
+    sender:
+      type: web #设置http的访问方式
+  sleuth:
+    sampler:
+      rate: 1 #设置抽样采集率为 1000% 默认为0.1 即10%
   redis:
     host: 192.168.247.111 #配置reids
     port: 6379
@@ -86,3 +94,9 @@ management:
 feign:
   sentinel:
     enabled: true
+
+logging:
+  level:
+    org.springframework.cloud.openfeign: DEBUG
+    org.springframework.cloud.sleuth: DEBUG
+    com.atguigu.gulimail: debug  #打印debut日志
